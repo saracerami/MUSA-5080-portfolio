@@ -2,9 +2,7 @@
 title: "Home"
 ---
 
-# YOUR NAME HERE {#welcome}
-
-<!-- CHANGE THIS: replace with your own name above -->
+Sara Cerami
 
 Welcome to my portfolio for **MUSA 5080: Public Policy Analytics** at the
 University of Pennsylvania.
