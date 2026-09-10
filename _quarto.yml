@@ -23,7 +23,7 @@ website:
 
 format:
   html:
-    theme: spacelab
+    theme: Ayu Mirage
     toc: true
     code-fold: false
     code-tools: true
