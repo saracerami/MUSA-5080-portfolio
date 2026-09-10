@@ -1,0 +1,107 @@
+---
+title: "Assignment 2: Who Do We Know the Least About?"
+subtitle: "Measuring uncertainty in American Community Survey data"
+author: Sara Cerami
+date: September 9, 2026
+format:
+  html:
+    toc: true
+    code-fold: false
+execute:
+  warning: false
+  message: false
+---
+
+In this analysis, I look at Median Gross Rent across counties in New York, and
+ask which communities we measure most and least reliably.
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(tidycensus)
+```
+
+```{r}
+my_state <- "NY"       
+my_variable <- "B25064_001"     
+```
+```{r}
+county_data <- get_acs(
+  geography = "county",
+  variables = my_variable,
+  state = my_state,
+  year = 2023,
+  survey = "acs5"
+)
+```
+
+```{r}
+dim(county_data)
+head(county_data)
+```
+
+```{r}
+county_data <- county_data %>%
+  mutate(moe_pct = moe / estimate * 100)
+```
+
+
+```{r}
+county_data %>%
+  arrange(desc(moe_pct)) %>%
+  select(NAME, estimate, moe, moe_pct) %>%
+  head(10)
+```
+
+Hamilton County, New York, a rural county Northwest of Albany, has the highest margin of error relative to its estimate. Hamilton County has an 11% margin of error when calculating estimated Median Gross Rent. 
+
+```{r}
+county_data <- county_data %>%
+  mutate(reliability = case_when(
+    moe_pct < 5  ~ "High confidence",
+    moe_pct < 10 ~ "Moderate",
+    TRUE         ~ "Low confidence"
+  ))
+
+count(county_data, reliability)
+```
+
+51 counties in New York fall into the high confidence category, 10 in the moderate confidence category, and 1 in the low confidence category.
+
+```{r}
+county_wide <- get_acs(
+  geography = "county",
+  variables = c(myvar = my_variable,
+                pop   = "B01003_001"),
+  state = my_state,
+  year = 2023,
+  survey = "acs5",
+  output = "wide"
+)
+
+head(county_wide)
+```
+
+```{r}
+county_wide <- county_wide %>%
+  mutate(moe_pct = myvarM / myvarE * 100) %>%
+  mutate(reliability = case_when(
+    moe_pct < 5  ~ "High confidence",
+    moe_pct < 15 ~ "Moderate",
+    TRUE         ~ "Low confidence"
+  ))
+```
+
+```{r}
+county_wide %>%
+  group_by(reliability) %>%
+  summarize(
+    n_counties = n(),
+    avg_population = mean(popE)
+  )
+```
+
+With the increased moderate confidence moe_pct threshold from moe_pct < 10 to moe_pct < 15, there are no longer any counties that fall in the low confidence category and instead, counties that fall in the moderate confidence category increase from 10 to 11.
+
+Counties that fall in the high confidence category have an average population of 381,479 while counties that fall in the moderate confidence category have an average population of 37,898. The median population of 381,479 is nearly 10x the population size of the moderate confidence counties (37,898). 
+
+We have the least confident data for smaller, more rural counties. The four least populous counties fall within the moderate confidence category. The remaining 7 counties that fall in the moderate confidence category all fall within the bottom 39th percentile of least populous counties in the state. One reason this could be the case, is that smaller samples provide less confidence given higher rates of variability. Additionally, sparsely populated counties, like Hamilton County (11% moe) and Schuyler County (8.7% moe), require significantly more work for those gathering data. In denser more populous counties like Queens, Kings, and Bronx counties, (all with less than 1% moe), data gathering requires much less travel. Given the higher rate of variability in smaller sample sizes, those in rural, less populous and sparsely populated areas may be inequitably represented by the data. Varying confidence rates allow policy makers to take into account data imprecision. Policy makers or state agencies should not treat data from counties with such divergent population sizes as comparable.  
