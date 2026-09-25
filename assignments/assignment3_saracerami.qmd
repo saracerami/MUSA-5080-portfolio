@@ -42,14 +42,14 @@ sf_tract_income <- sf_tract_income %>%
     ))
 ```
 
-```{r} 
+```{r}
 #| include: false    
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point()
 ```
 
-```{r} 
+```{r}
 #| include: false  
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
@@ -57,7 +57,6 @@ ggplot(sf_tract_income)+
 ```
 
 ```{r}
-
 sf_tract_income %>%
   ggplot(aes(x = NAME, y = estimate)) +
   geom_col() +
@@ -135,11 +134,12 @@ hh_income_tested %>%
   count(significant)
 ```
 
-```{r} 
+```{r}
 #| include: false    
 library(gt)
 ```
-  
+
+```{r}
 reliability_table <- sf_tract_income %>%
   mutate(
     cv = (moe / 1.645) / estimate * 100,
@@ -178,8 +178,9 @@ reliability_table %>%
   tab_source_note(
     "Reliability thresholds follow Jurjevich et al. (2018): CV < 12% reliable, 12–40% somewhat reliable, > 40% unreliable."
   )
+```
 
-```{r} 
+```{r}
 #| include: false    
 acs_2015 <- get_acs(
   geography = "tract",
@@ -193,7 +194,7 @@ acs_2015 <- get_acs(
 acs_2020 <- get_acs(
   geography = "tract",
   county = "San Francisco",
-  variables = "DP03_0063E",,
+  variables = "DP03_0063E",
   year = 2020,
   state = "CA",
   geometry = FALSE
@@ -203,7 +204,7 @@ library(dplyr)
 library(sf)
 ```
 
-```{r} 
+```{r}
 #| include: false  
 hh_income_tested <- hh_income_tested %>%
   left_join(acs_2015 %>% select(GEOID, geometry), by = 'GEOID')
