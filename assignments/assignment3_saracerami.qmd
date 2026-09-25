@@ -8,6 +8,9 @@ format:
     code-fold: true
     code-summary: "Show code"
     embed-resources: true
+  execute:
+    warning: false
+    message: false
 ---
     
 In 2022, the SF Standard, a San Francisco news outlet, published an article entitled, "Before the world changed: New census data looks at pre-Covid San Francisco: The latest ACS five-year study gives robust information on the city’s neighborhoods." It was comprised of a number of various maps and accompanying reports documenting how San Francisco's demographics shifted between the recently released 5-year American Community Survey (2016-2020) and the prior most recent non overlapping survey (2011-2015). The first map highlights the percent change of average household income in each San Francisco zipcode between the two 5-year ACS reports. It does not mention its methodology or approach to analyzing the data. I am interested in knowing if it was incorporated or addressed in the calculation of the percent change.        
@@ -45,7 +48,7 @@ sf_tract_income <- sf_tract_income %>%
 ```
 
 ```{r}
-#| include: false
+#| eval: false
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point()
