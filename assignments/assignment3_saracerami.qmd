@@ -40,16 +40,23 @@ sf_tract_income <- sf_tract_income %>%
     moe_pct < 10 ~ "Moderate",
     TRUE         ~ "Low confidence"
     ))
+```
 
+```{r} 
 #| include: false    
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point()
+```
 
+```{r} 
 #| include: false  
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point(color = "maroon")
+```
+
+```{r}
 
 sf_tract_income %>%
   ggplot(aes(x = NAME, y = estimate)) +
@@ -126,8 +133,12 @@ hh_income_tested <- mean_hh_income_sf_new %>%
   
 hh_income_tested %>%
   count(significant)
-  
+```
+
+```{r} 
+#| include: false    
 library(gt)
+```
   
 reliability_table <- sf_tract_income %>%
   mutate(
@@ -167,7 +178,9 @@ reliability_table %>%
   tab_source_note(
     "Reliability thresholds follow Jurjevich et al. (2018): CV < 12% reliable, 12–40% somewhat reliable, > 40% unreliable."
   )
-  
+
+```{r} 
+#| include: false    
 acs_2015 <- get_acs(
   geography = "tract",
   county = "San Francisco",
@@ -188,16 +201,24 @@ acs_2020 <- get_acs(
 
 library(dplyr)
 library(sf)
+```
 
+```{r} 
+#| include: false  
 hh_income_tested <- hh_income_tested %>%
   left_join(acs_2015 %>% select(GEOID, geometry), by = 'GEOID')
+```
 
+```{r}
+#| include: false  
 hh_income_tested <- hh_income_tested %>%
   filter(NAME != "Census Tract 9804.01, San Francisco County, California", NAME != "Census Tract 017903, San Francisco County, California")
 
 library(ggplot2)
 geom_to_sf <- st_as_sf(hh_income_tested)
+```
 
+```{r}
 ggplot(data = geom_to_sf) +
   geom_sf(aes(fill = significant), color = "black", linewidth = .2) +
   labs(title = "Tract by Statistical Significance", subtitle = "Assessing the Statistical Significance of Mean Household \nIncome Changes: ACS 2015 vs. ACS 2020",  fill = "Legend") +
