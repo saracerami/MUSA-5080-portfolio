@@ -1,0 +1,222 @@
+---
+title: "Verify the Claim: Before the world changed: New census data looks at pre-Covid San Francisco"
+author: "Sara Cerami"
+date: September 18, 2026
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-summary: "Show code"
+    embed-resources: true
+---
+    
+In 2022, the SF Standard, a San Francisco news outlet, published an article entitled, "Before the world changed: New census data looks at pre-Covid San Francisco: The latest ACS five-year study gives robust information on the city’s neighborhoods." It was comprised of a number of various maps and accompanying reports documenting how San Francisco's demographics shifted between the recently released 5-year American Community Survey (2016-2020) and the prior most recent non overlapping survey (2011-2015). The first map highlights the percent change of average household income in each San Francisco zipcode between the two 5-year ACS reports. It does not mention its methodology or approach to analyzing the data. I am interested in knowing if it was incorporated or addressed in the calculation of the percent change.        
+
+The article does not explicitly say what variable it is using to calculate the average household income per zipcode, so to be sure I was on the right track, I pulled both the median household income as well as the mean household income (DP03_0063E). Comparing the two forms of averages, it was evident that the article used mean. The mean household income data accounts for inflation, calculated based on the year the report is issued. Additionally, median household income is top-coded in 5-year ACS tract level data, meaning that there is a cap on the highest income to protect privacy. While it may not impact the true median, it is a notable decision from the Census Bureau.  
+
+The two ACS reports do not overlap.
+```{r}
+library(tidycensus)
+library(tidyverse)
+
+sf_tract_income <- get_acs(
+  geography = "tract",
+  variables = "DP03_0063E",
+  state = "CA",
+  county = "San Francisco",
+  year = 2020,
+  survey = "acs5"
+)
+```
+
+```{r}
+sf_tract_income <- sf_tract_income %>%
+  mutate(moe_pct = moe / estimate * 100)
+
+sf_tract_income <- sf_tract_income %>%
+  mutate(reliability = case_when(
+    moe_pct < 5  ~ "High confidence",
+    moe_pct < 10 ~ "Moderate",
+    TRUE         ~ "Low confidence"
+    ))
+    
+ggplot(sf_tract_income)+
+  aes(x=estimate, y = moe_pct)+
+  geom_point()
+  
+ggplot(sf_tract_income)+
+  aes(x=estimate, y = moe_pct)+
+  geom_point(color = "maroon")
+  
+sf_tract_income %>%
+  ggplot(aes(x = NAME, y = estimate)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = estimate - moe, ymax = estimate + moe))
+  
+sf_tract_income %>%
+  arrange(desc(moe_pct)) %>%
+  mutate(NAME = str_remove(NAME, "San Francisco County, California")) %>%
+  mutate(NAME = str_remove(NAME, "Census")) %>%
+  slice_head(n = 15) %>%
+  ggplot(aes(x = reorder(NAME, moe), y = estimate)) +
+  geom_col(fill = "maroon") +
+  geom_errorbar(aes(ymin = estimate - moe, ymax = estimate + moe), width = 0.3) +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(
+      family = "sans",
+      face = "bold",
+      size = 12,
+      color = "black",
+      hjust = 0,
+      vjust = 0,
+      )
+  ) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "SF Mean Household Income Estimates",
+    subtitle = "San Francisco Census Tracts, ACS 2020 5-year estimates",
+    x = "Tract",
+    y = "Mean Household Income and MOE"
+    )
+```
+Because I am not calculating a rate from two separate counts, and because mean is an aggregate of data, not a count, moe_prop() does not apply here. 
+
+The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.  
+
+```{r}
+  get_mean_hh_income_sf <- function(yr) {
+  get_acs(
+    geography = "tract",
+    variables = "DP03_0063E",
+    county = "San Francisco",
+    state     = "CA",
+    year      = yr,
+    survey    = "acs5"
+  ) %>%
+    mutate(period = paste0(yr - 4, "-", yr))
+}
+
+mean_hh_income_sf_change <- bind_rows(
+  get_mean_hh_income_sf(2015),
+  get_mean_hh_income_sf(2020)
+)
+
+mean_hh_income_sf_new <- mean_hh_income_sf_change %>%
+  select(GEOID, NAME, period, estimate, moe) %>%
+  pivot_wider(
+    names_from  = period,
+    values_from = c(estimate, moe)
+  )
+
+hh_income_tested <- mean_hh_income_sf_new %>%
+  mutate(
+    change   = `estimate_2016-2020` - `estimate_2011-2015`,
+    se_1     = `moe_2011-2015` / 1.645,
+    se_2     = `moe_2016-2020` / 1.645,
+    se_diff  = sqrt(se_1^2 + se_2^2),
+    moe_diff = se_diff * 1.645,
+    z        = change / se_diff,
+    significant = abs(z) > 1.645
+  )
+  
+hh_income_tested %>%
+  count(significant)
+  
+library(gt)
+  
+reliability_table <- sf_tract_income %>%
+  mutate(
+    cv = (moe / 1.645) / estimate * 100,
+    dot = case_when(
+      cv < 12  ~ "🟢",
+      cv <= 40 ~ "🟡",
+      TRUE     ~ "🔴"
+    ),
+    flag = case_when(
+      cv < 12  ~ "Reliable",
+      cv <= 40 ~ "Somewhat reliable",
+      TRUE     ~ "Unreliable"
+    ),
+    NAME = str_remove(NAME, " San Francisco County, California")
+  ) %>%
+  arrange(desc(cv)) %>%
+  select(dot, NAME, estimate, moe, cv, flag)
+
+reliability_table %>%
+  gt() %>%
+  fmt_number(columns = c(estimate, moe), decimals = 0) %>%
+  fmt_number(columns = cv, decimals = 1) %>%
+  cols_label(
+    dot      = "",
+    NAME     = "Tract",
+    estimate = "Estimate",
+    moe      = "MOE",
+    cv       = "CV (%)",
+    flag     = "Reliability"
+  ) %>%
+  cols_align(align = "center", columns = dot) %>%
+  tab_header(
+    title    = "Mean Household Income by San Francisco Census Tract",
+    subtitle = "San Francisco Census Tracts, ACS 2020 5-year estimates"
+  ) %>%
+  tab_source_note(
+    "Reliability thresholds follow Jurjevich et al. (2018): CV < 12% reliable, 12–40% somewhat reliable, > 40% unreliable."
+  )
+  
+acs_2015 <- get_acs(
+  geography = "tract",
+  county = "San Francisco",
+  variables = "DP03_0063E",
+  year = 2015,
+  state = "CA",
+  geometry = TRUE
+)
+
+acs_2020 <- get_acs(
+  geography = "tract",
+  county = "San Francisco",
+  variables = "DP03_0063E",,
+  year = 2020,
+  state = "CA",
+  geometry = FALSE
+)
+
+library(dplyr)
+library(sf)
+
+hh_income_tested <- hh_income_tested %>%
+  left_join(acs_2015 %>% select(GEOID, geometry), by = 'GEOID')
+
+hh_income_tested <- hh_income_tested %>%
+  filter(NAME != "Census Tract 9804.01, San Francisco County, California", NAME != "Census Tract 017903, San Francisco County, California")
+
+library(ggplot2)
+geom_to_sf <- st_as_sf(hh_income_tested)
+
+ggplot(data = geom_to_sf) +
+  geom_sf(aes(fill = significant), color = "black", linewidth = .2) +
+  labs(title = "Tract by Statistical Significance", subtitle = "Assessing the Statistical Significance of Mean Household \nIncome Changes: ACS 2015 vs. ACS 2020",  fill = "Legend") +
+  scale_fill_manual(values = c("FALSE" = "limegreen", "TRUE" = "maroon")) +
+  theme_void() +
+  theme(
+    plot.title = element_text(
+      family = "sans",
+      face = "bold",
+      size = 16,
+      color = "black",
+      hjust = 0,
+      vjust = 0,
+      margin = margin(b=8)
+    ),
+    plot.subtitle = element_text(
+      family = "sans",
+      face = "italic",
+      hjust = 0,
+      vjust = 0,
+      margin = margin(b=-90)
+    )
+  );
+```
+
