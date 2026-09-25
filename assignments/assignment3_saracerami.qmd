@@ -86,7 +86,7 @@ sf_tract_income %>%
 ```
 Because I am not calculating a rate from two separate counts, and because mean is an aggregate of data, not a count, moe_prop() does not apply here. 
 
-The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.  
+The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.   
 
 ```{r}
   get_mean_hh_income_sf <- function(yr) {
@@ -222,6 +222,12 @@ ggplot(data = geom_to_sf) +
     )
   )
 ```
-The article's broadest claim is that each Zip code had at least an 11% increase in mean household income. Based on my analysis, it does not seem as if the article took the margin of error into account when providing estimates of the rate of increase. Of the [Y] tracts with estimates in both periods, [X] show an increase in mean household income that is statistically distinguishable from zero at 90% confidence, while [Z] show changes that fall within their margins of error.
+The article's broadest claim is that each Zip code in San Francisco saw an increase in mean household income between the ACS15 and ACS20. Based on my analysis, it does not seem as if the article took the margin of error into account when providing estimates of rate of income increase. Of the 155 tracts with estimates in both periods, 117 show an increase in mean household income that is statistically distinguishable from zero at 90% confidence, while 38 show changes that fall within their margins of error.
 
 Several claims cannot be determined from this analysis. The specific percentage gains, over 75% in 94158 and 94102 and over 50% in 94118, 94131, and 94123, are reported for ZIP codes, while my analysis uses census tracts, which do not line up with ZIP code boundaries. 
+
+Ultimately, the most flagrant offense in this article is its lack of recognition for the MOE. It is made more severe by the determinacy of its estimates.  
+
+Rewrite: 
+
+In the late 2010s, household incomes rose in much of San Francisco. Comparing the Census Bureau's 2011–2015 and 2016–2020 5 year American Community Survey reports, 117 of the 155 census tracts with estimates in both period, show an increase in average household income large enough that we can be confident it isn't a product of survey error. The estimated change is small in the remaining 38 tracts relative to the survey's margin of error. This means that the data can't tell us whether incomes rose, fell, or held steady in those tracts. The largest confirmed increases are concentrated in and near the Downtown, which is an area that experienced substantially new housing and an influx of higher-earning residents. This corresponds to the trajectory of the tech boom, with a consistent increase in higher-earners moving to San Francisco in the 2010s. The increase is partly accounted for by who moved in, not only reflecting an increase for the people already living there. And because these figures are averages, a relatively small number of very high earners can pull a neighborhood's number up. Rising averages are also consistent with the widening gap between rich and poor.
