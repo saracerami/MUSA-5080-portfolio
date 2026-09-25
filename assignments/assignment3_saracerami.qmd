@@ -32,7 +32,7 @@ sf_tract_income <- get_acs(
 ```
 
 ```{r}
-#| echo: false
+#| include: false
 sf_tract_income <- sf_tract_income %>%
   mutate(moe_pct = moe / estimate * 100)
 
@@ -59,7 +59,7 @@ ggplot(sf_tract_income)+
 ```
 
 ```{r}
-#| echo: false
+#| include: false
 sf_tract_income %>%
   ggplot(aes(x = NAME, y = estimate)) +
   geom_col() +
@@ -99,7 +99,7 @@ Because I am not calculating a rate from two separate counts, and because mean i
 The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.   
 
 ```{r}
-#| echo: false
+#| include: false
 get_mean_hh_income_sf <- function(yr) {
   get_acs(
     geography = "tract",
@@ -145,7 +145,7 @@ library(gt)
 ```
 
 ```{r}
-#| echo: false
+#| include: false
 reliability_table <- sf_tract_income %>%
   mutate(
     cv = (moe / 1.645) / estimate * 100,
@@ -194,7 +194,7 @@ acs_2015 <- get_acs(
   variables = "DP03_0063E",
   year = 2015,
   state = "CA",
-  geometry = TRUE
+  geometry = TRUE,
 )
 
 acs_2020 <- get_acs(
@@ -226,7 +226,6 @@ geom_to_sf <- st_as_sf(hh_income_tested)
 ```
 
 ```{r}
-#| echo: false
 ggplot(data = geom_to_sf) +
   geom_sf(aes(fill = significant), color = "black", linewidth = .2) +
   labs(title = "Tract by Statistical Significance", subtitle = "Assessing the Statistical Significance of Mean Household \nIncome Changes: ACS 2015 vs. ACS 2020",  fill = "Legend") +
