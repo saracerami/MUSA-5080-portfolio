@@ -15,6 +15,7 @@ In 2022, the SF Standard, a San Francisco news outlet, published an article enti
 The article does not explicitly say what variable it is using to calculate the average household income per zipcode, so to be sure I was on the right track, I pulled both the median household income as well as the mean household income (DP03_0063E). Comparing the two forms of averages, it was evident that the article used mean. The mean household income data accounts for inflation, calculated based on the year the report is issued. Additionally, median household income is top-coded in 5-year ACS tract level data, meaning that there is a cap on the highest income to protect privacy. While it may not impact the true median, it is a notable decision from the Census Bureau.  
 
 The two ACS reports do not overlap.
+
 ```{r}
 #| include: false
 library(tidycensus)
@@ -31,6 +32,7 @@ sf_tract_income <- get_acs(
 ```
 
 ```{r}
+#| echo: false
 sf_tract_income <- sf_tract_income %>%
   mutate(moe_pct = moe / estimate * 100)
 
@@ -43,20 +45,21 @@ sf_tract_income <- sf_tract_income %>%
 ```
 
 ```{r}
-#| include: false    
+#| include: false
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point()
 ```
 
 ```{r}
-#| include: false  
+#| include: false
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point(color = "maroon")
 ```
 
 ```{r}
+#| echo: false
 sf_tract_income %>%
   ggplot(aes(x = NAME, y = estimate)) +
   geom_col() +
@@ -90,12 +93,14 @@ sf_tract_income %>%
     y = "Mean Household Income and MOE"
     )
 ```
+
 Because I am not calculating a rate from two separate counts, and because mean is an aggregate of data, not a count, moe_prop() does not apply here. 
 
 The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.   
 
 ```{r}
-  get_mean_hh_income_sf <- function(yr) {
+#| echo: false
+get_mean_hh_income_sf <- function(yr) {
   get_acs(
     geography = "tract",
     variables = "DP03_0063E",
@@ -135,11 +140,12 @@ hh_income_tested %>%
 ```
 
 ```{r}
-#| include: false    
+#| include: false
 library(gt)
 ```
 
 ```{r}
+#| echo: false
 reliability_table <- sf_tract_income %>%
   mutate(
     cv = (moe / 1.645) / estimate * 100,
@@ -181,7 +187,7 @@ reliability_table %>%
 ```
 
 ```{r}
-#| include: false    
+#| include: false
 acs_2015 <- get_acs(
   geography = "tract",
   county = "San Francisco",
@@ -205,13 +211,13 @@ library(sf)
 ```
 
 ```{r}
-#| include: false  
+#| include: false
 hh_income_tested <- hh_income_tested %>%
   left_join(acs_2015 %>% select(GEOID, geometry), by = 'GEOID')
 ```
 
 ```{r}
-#| include: false  
+#| include: false
 hh_income_tested <- hh_income_tested %>%
   filter(NAME != "Census Tract 9804.01, San Francisco County, California", NAME != "Census Tract 017903, San Francisco County, California")
 
@@ -220,6 +226,7 @@ geom_to_sf <- st_as_sf(hh_income_tested)
 ```
 
 ```{r}
+#| echo: false
 ggplot(data = geom_to_sf) +
   geom_sf(aes(fill = significant), color = "black", linewidth = .2) +
   labs(title = "Tract by Statistical Significance", subtitle = "Assessing the Statistical Significance of Mean Household \nIncome Changes: ACS 2015 vs. ACS 2020",  fill = "Legend") +
@@ -244,12 +251,7 @@ ggplot(data = geom_to_sf) +
     )
   )
 ```
+
 The article's broadest claim is that each Zip code in San Francisco saw an increase in mean household income between the ACS15 and ACS20. Based on my analysis, it does not seem as if the article took the margin of error into account when providing estimates of rate of income increase. Of the 155 tracts with estimates in both periods, 117 show an increase in mean household income that is statistically distinguishable from zero at 90% confidence, while 38 show changes that fall within their margins of error.
 
-Several claims cannot be determined from this analysis. The specific percentage gains, over 75% in 94158 and 94102 and over 50% in 94118, 94131, and 94123, are reported for ZIP codes, while my analysis uses census tracts, which do not line up with ZIP code boundaries. 
-
-Ultimately, the most flagrant offense in this article is its lack of recognition for the MOE. It is made more severe by the determinacy of its estimates.  
-
-Rewrite: 
-
-In the late 2010s, household incomes rose in much of San Francisco. Comparing the Census Bureau's 2011–2015 and 2016–2020 5 year American Community Survey reports, 117 of the 155 census tracts with estimates in both period, show an increase in average household income large enough that we can be confident it isn't a product of survey error. The estimated change is small in the remaining 38 tracts relative to the survey's margin of error. This means that the data can't tell us whether incomes rose, fell, or held steady in those tracts. The largest confirmed increases are concentrated in and near the Downtown, which is an area that experienced substantially new housing and an influx of higher-earning residents. This corresponds to the trajectory of the tech boom, with a consistent increase in higher-earners moving to San Francisco in the 2010s. The increase is partly accounted for by who moved in, not only reflecting an increase for the people already living there. And because these figures are averages, a relatively small number of very high earners can pull a neighborhood's number up. Rising averages are also consistent with the widening gap between rich and poor.
+Several claims cannot be determined from this analysis. The specific percentage gains, over 75% in 94158 and 94102 and over 50% in 94118, 94131, and 94123, are reported for ZIP codes, while my analysis used tracts.
