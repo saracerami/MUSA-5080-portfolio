@@ -16,6 +16,7 @@ The article does not explicitly say what variable it is using to calculate the a
 
 The two ACS reports do not overlap.
 ```{r}
+#| include: false
 library(tidycensus)
 library(tidyverse)
 
@@ -39,15 +40,17 @@ sf_tract_income <- sf_tract_income %>%
     moe_pct < 10 ~ "Moderate",
     TRUE         ~ "Low confidence"
     ))
-    
+
+#| include: false    
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point()
-  
+
+#| include: false  
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point(color = "maroon")
-  
+
 sf_tract_income %>%
   ggplot(aes(x = NAME, y = estimate)) +
   geom_col() +
@@ -217,6 +220,8 @@ ggplot(data = geom_to_sf) +
       vjust = 0,
       margin = margin(b=-90)
     )
-  );
+  )
 ```
+The article's broadest claim is that each Zip code had at least an 11% increase in mean household income. Based on my analysis, it does not seem as if the article took the margin of error into account when providing estimates of the rate of increase. Of the [Y] tracts with estimates in both periods, [X] show an increase in mean household income that is statistically distinguishable from zero at 90% confidence, while [Z] show changes that fall within their margins of error.
 
+Several claims cannot be determined from this analysis. The specific percentage gains, over 75% in 94158 and 94102 and over 50% in 94118, 94131, and 94123, are reported for ZIP codes, while my analysis uses census tracts, which do not line up with ZIP code boundaries. 
