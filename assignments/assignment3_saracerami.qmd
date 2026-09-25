@@ -48,14 +48,14 @@ sf_tract_income <- sf_tract_income %>%
 ```
 
 ```{r}
-#| eval: false
+#| include: false
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point()
 ```
 
 ```{r}
-#| eval: false
+#| include: false
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point(color = "maroon")
@@ -190,7 +190,7 @@ reliability_table %>%
 ```
 
 ```{r}
-#| eval: false
+#| include: false
 acs_2015 <- get_acs(
   geography = "tract",
   county = "San Francisco",
@@ -198,6 +198,7 @@ acs_2015 <- get_acs(
   year = 2015,
   state = "CA",
   geometry = TRUE,
+  progress_bar = FALSE
 )
 
 acs_2020 <- get_acs(
@@ -206,7 +207,8 @@ acs_2020 <- get_acs(
   variables = "DP03_0063E",
   year = 2020,
   state = "CA",
-  geometry = FALSE
+  geometry = FALSE,
+  progress_bar = FALSE
 )
 
 library(dplyr)
@@ -214,7 +216,7 @@ library(sf)
 ```
 
 ```{r}
-#| eval: false
+#| include: false
 hh_income_tested <- hh_income_tested %>%
   left_join(acs_2015 %>% select(GEOID, geometry), by = 'GEOID')
 ```
