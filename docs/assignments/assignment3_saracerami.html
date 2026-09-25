@@ -4176,29 +4176,2450 @@ vertical-align: -.125em;
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> geom_to_sf) <span class="sc">+</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> significant), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">linewidth =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Tract by Statistical Significance&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Assessing the Statistical Significance of Mean Household </span><span class="sc">\n</span><span class="st">Income Changes: ACS 2015 vs. ACS 2020&quot;</span>,  <span class="at">fill =</span> <span class="st">&quot;Legend&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;FALSE&quot;</span> <span class="ot">=</span> <span class="st">&quot;limegreen&quot;</span>, <span class="st">&quot;TRUE&quot;</span> <span class="ot">=</span> <span class="st">&quot;maroon&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">16</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="dv">8</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;italic&quot;</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="sc">-</span><span class="dv">90</span>)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv =</span> (moe <span class="sc">/</span> <span class="fl">1.645</span>) <span class="sc">/</span> estimate <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">dot =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;</span> <span class="dv">12</span>  <span class="sc">~</span> <span class="st">&quot;🟢&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;🟡&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>     <span class="sc">~</span> <span class="st">&quot;🔴&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">flag =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;</span> <span class="dv">12</span>  <span class="sc">~</span> <span class="st">&quot;Reliable&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;Somewhat reliable&quot;</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>     <span class="sc">~</span> <span class="st">&quot;Unreliable&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot; San Francisco County, California&quot;</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cv)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dot, NAME, estimate, moe, cv, flag)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="sc">%&gt;%</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(estimate, moe), <span class="at">decimals =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> cv, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">dot      =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME     =</span> <span class="st">&quot;Tract&quot;</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="st">&quot;Estimate&quot;</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">moe      =</span> <span class="st">&quot;MOE&quot;</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv       =</span> <span class="st">&quot;CV (%)&quot;</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">flag     =</span> <span class="st">&quot;Reliability&quot;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> dot) <span class="sc">%&gt;%</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">&quot;Mean Household Income by San Francisco Census Tract&quot;</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;San Francisco Census Tracts, ACS 2020 5-year estimates&quot;</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Reliability thresholds follow Jurjevich et al. (2018): CV &lt; 12% reliable, 12–40% somewhat reliable, &gt; 40% unreliable.&quot;</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="cyojlvxtle" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cyojlvxtle table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#cyojlvxtle thead, #cyojlvxtle tbody, #cyojlvxtle tfoot, #cyojlvxtle tr, #cyojlvxtle td, #cyojlvxtle th {
+border-style: none;
+}
+#cyojlvxtle p {
+margin: 0;
+padding: 0;
+}
+#cyojlvxtle .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#cyojlvxtle .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#cyojlvxtle .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#cyojlvxtle .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#cyojlvxtle .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#cyojlvxtle .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cyojlvxtle .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#cyojlvxtle .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#cyojlvxtle .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#cyojlvxtle .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#cyojlvxtle .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#cyojlvxtle .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#cyojlvxtle .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#cyojlvxtle .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#cyojlvxtle .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#cyojlvxtle .gt_from_md > :first-child {
+margin-top: 0;
+}
+#cyojlvxtle .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#cyojlvxtle .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#cyojlvxtle .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cyojlvxtle .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#cyojlvxtle .gt_row_group_first td {
+border-top-width: 2px;
+}
+#cyojlvxtle .gt_row_group_first th {
+border-top-width: 2px;
+}
+#cyojlvxtle .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cyojlvxtle .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#cyojlvxtle .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#cyojlvxtle .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cyojlvxtle .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cyojlvxtle .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#cyojlvxtle .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#cyojlvxtle .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#cyojlvxtle .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#cyojlvxtle .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#cyojlvxtle .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cyojlvxtle .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#cyojlvxtle .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#cyojlvxtle .gt_left {
+text-align: left;
+}
+#cyojlvxtle .gt_center {
+text-align: center;
+}
+#cyojlvxtle .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#cyojlvxtle .gt_font_normal {
+font-weight: normal;
+}
+#cyojlvxtle .gt_font_bold {
+font-weight: bold;
+}
+#cyojlvxtle .gt_font_italic {
+font-style: italic;
+}
+#cyojlvxtle .gt_super {
+font-size: 65%;
+}
+#cyojlvxtle .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#cyojlvxtle .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#cyojlvxtle .gt_indent_1 {
+text-indent: 5px;
+}
+#cyojlvxtle .gt_indent_2 {
+text-indent: 10px;
+}
+#cyojlvxtle .gt_indent_3 {
+text-indent: 15px;
+}
+#cyojlvxtle .gt_indent_4 {
+text-indent: 20px;
+}
+#cyojlvxtle .gt_indent_5 {
+text-indent: 25px;
+}
+#cyojlvxtle .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#cyojlvxtle div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="6" class="gt_heading gt_title gt_font_normal">Mean Household Income by San Francisco Census Tract</td>
+</tr>
+<tr class="gt_heading even">
+<td colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">San Francisco Census Tracts, ACS 2020 5-year estimates</td>
+</tr>
+<tr class="gt_col_headings header">
+<th id="dot" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="NAME" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Tract</th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Estimate</th>
+<th id="moe" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">MOE</th>
+<th id="cv" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">CV (%)</th>
+<th id="flag" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Reliability</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.07,</td>
+<td class="gt_row gt_right" headers="estimate">167,488</td>
+<td class="gt_row gt_right" headers="moe">87,191</td>
+<td class="gt_row gt_right" headers="cv">31.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 607.02,</td>
+<td class="gt_row gt_right" headers="estimate">154,922</td>
+<td class="gt_row gt_right" headers="moe">77,848</td>
+<td class="gt_row gt_right" headers="cv">30.5</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.01,</td>
+<td class="gt_row gt_right" headers="estimate">353,543</td>
+<td class="gt_row gt_right" headers="moe">176,624</td>
+<td class="gt_row gt_right" headers="cv">30.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 178.03,</td>
+<td class="gt_row gt_right" headers="estimate">147,686</td>
+<td class="gt_row gt_right" headers="moe">62,422</td>
+<td class="gt_row gt_right" headers="cv">25.7</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 611.01,</td>
+<td class="gt_row gt_right" headers="estimate">66,753</td>
+<td class="gt_row gt_right" headers="moe">28,134</td>
+<td class="gt_row gt_right" headers="cv">25.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 604,</td>
+<td class="gt_row gt_right" headers="estimate">114,686</td>
+<td class="gt_row gt_right" headers="moe">46,049</td>
+<td class="gt_row gt_right" headers="cv">24.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9809,</td>
+<td class="gt_row gt_right" headers="estimate">117,630</td>
+<td class="gt_row gt_right" headers="moe">47,107</td>
+<td class="gt_row gt_right" headers="cv">24.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.04,</td>
+<td class="gt_row gt_right" headers="estimate">296,355</td>
+<td class="gt_row gt_right" headers="moe">116,603</td>
+<td class="gt_row gt_right" headers="cv">23.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 107.02,</td>
+<td class="gt_row gt_right" headers="estimate">140,821</td>
+<td class="gt_row gt_right" headers="moe">54,326</td>
+<td class="gt_row gt_right" headers="cv">23.5</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 161.01,</td>
+<td class="gt_row gt_right" headers="estimate">61,484</td>
+<td class="gt_row gt_right" headers="moe">23,402</td>
+<td class="gt_row gt_right" headers="cv">23.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 102.02,</td>
+<td class="gt_row gt_right" headers="estimate">282,884</td>
+<td class="gt_row gt_right" headers="moe">100,681</td>
+<td class="gt_row gt_right" headers="cv">21.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 122.02,</td>
+<td class="gt_row gt_right" headers="estimate">86,376</td>
+<td class="gt_row gt_right" headers="moe">30,373</td>
+<td class="gt_row gt_right" headers="cv">21.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.08,</td>
+<td class="gt_row gt_right" headers="estimate">288,367</td>
+<td class="gt_row gt_right" headers="moe">100,156</td>
+<td class="gt_row gt_right" headers="cv">21.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 161.02,</td>
+<td class="gt_row gt_right" headers="estimate">38,852</td>
+<td class="gt_row gt_right" headers="moe">13,385</td>
+<td class="gt_row gt_right" headers="cv">20.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 122.03,</td>
+<td class="gt_row gt_right" headers="estimate">54,991</td>
+<td class="gt_row gt_right" headers="moe">18,790</td>
+<td class="gt_row gt_right" headers="cv">20.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.02,</td>
+<td class="gt_row gt_right" headers="estimate">181,210</td>
+<td class="gt_row gt_right" headers="moe">61,771</td>
+<td class="gt_row gt_right" headers="cv">20.7</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9803,</td>
+<td class="gt_row gt_right" headers="estimate">117,356</td>
+<td class="gt_row gt_right" headers="moe">38,833</td>
+<td class="gt_row gt_right" headers="cv">20.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 231.03,</td>
+<td class="gt_row gt_right" headers="estimate">45,189</td>
+<td class="gt_row gt_right" headers="moe">14,026</td>
+<td class="gt_row gt_right" headers="cv">18.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 127,</td>
+<td class="gt_row gt_right" headers="estimate">259,448</td>
+<td class="gt_row gt_right" headers="moe">80,487</td>
+<td class="gt_row gt_right" headers="cv">18.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 351.02,</td>
+<td class="gt_row gt_right" headers="estimate">195,135</td>
+<td class="gt_row gt_right" headers="moe">56,554</td>
+<td class="gt_row gt_right" headers="cv">17.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 107.01,</td>
+<td class="gt_row gt_right" headers="estimate">43,061</td>
+<td class="gt_row gt_right" headers="moe">12,272</td>
+<td class="gt_row gt_right" headers="cv">17.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 102.01,</td>
+<td class="gt_row gt_right" headers="estimate">224,402</td>
+<td class="gt_row gt_right" headers="moe">63,854</td>
+<td class="gt_row gt_right" headers="cv">17.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 128.01,</td>
+<td class="gt_row gt_right" headers="estimate">374,474</td>
+<td class="gt_row gt_right" headers="moe">104,943</td>
+<td class="gt_row gt_right" headers="cv">17.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 123.01,</td>
+<td class="gt_row gt_right" headers="estimate">46,000</td>
+<td class="gt_row gt_right" headers="moe">12,815</td>
+<td class="gt_row gt_right" headers="cv">16.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 176.04,</td>
+<td class="gt_row gt_right" headers="estimate">130,102</td>
+<td class="gt_row gt_right" headers="moe">35,918</td>
+<td class="gt_row gt_right" headers="cv">16.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.06,</td>
+<td class="gt_row gt_right" headers="estimate">347,332</td>
+<td class="gt_row gt_right" headers="moe">93,048</td>
+<td class="gt_row gt_right" headers="cv">16.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 124.03,</td>
+<td class="gt_row gt_right" headers="estimate">38,665</td>
+<td class="gt_row gt_right" headers="moe">10,334</td>
+<td class="gt_row gt_right" headers="cv">16.2</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 101.02,</td>
+<td class="gt_row gt_right" headers="estimate">87,978</td>
+<td class="gt_row gt_right" headers="moe">23,039</td>
+<td class="gt_row gt_right" headers="cv">15.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 308,</td>
+<td class="gt_row gt_right" headers="estimate">236,480</td>
+<td class="gt_row gt_right" headers="moe">61,843</td>
+<td class="gt_row gt_right" headers="cv">15.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 612,</td>
+<td class="gt_row gt_right" headers="estimate">116,626</td>
+<td class="gt_row gt_right" headers="moe">30,400</td>
+<td class="gt_row gt_right" headers="cv">15.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 157.02,</td>
+<td class="gt_row gt_right" headers="estimate">232,235</td>
+<td class="gt_row gt_right" headers="moe">58,887</td>
+<td class="gt_row gt_right" headers="cv">15.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 104.02,</td>
+<td class="gt_row gt_right" headers="estimate">219,237</td>
+<td class="gt_row gt_right" headers="moe">55,263</td>
+<td class="gt_row gt_right" headers="cv">15.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 122.04,</td>
+<td class="gt_row gt_right" headers="estimate">92,780</td>
+<td class="gt_row gt_right" headers="moe">23,277</td>
+<td class="gt_row gt_right" headers="cv">15.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 330.01,</td>
+<td class="gt_row gt_right" headers="estimate">134,920</td>
+<td class="gt_row gt_right" headers="moe">33,614</td>
+<td class="gt_row gt_right" headers="cv">15.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 332.03,</td>
+<td class="gt_row gt_right" headers="estimate">101,473</td>
+<td class="gt_row gt_right" headers="moe">24,986</td>
+<td class="gt_row gt_right" headers="cv">15.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 176.02,</td>
+<td class="gt_row gt_right" headers="estimate">74,351</td>
+<td class="gt_row gt_right" headers="moe">18,290</td>
+<td class="gt_row gt_right" headers="cv">15.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 303.02,</td>
+<td class="gt_row gt_right" headers="estimate">244,116</td>
+<td class="gt_row gt_right" headers="moe">59,150</td>
+<td class="gt_row gt_right" headers="cv">14.7</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 125.04,</td>
+<td class="gt_row gt_right" headers="estimate">38,653</td>
+<td class="gt_row gt_right" headers="moe">9,305</td>
+<td class="gt_row gt_right" headers="cv">14.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 258,</td>
+<td class="gt_row gt_right" headers="estimate">116,257</td>
+<td class="gt_row gt_right" headers="moe">27,880</td>
+<td class="gt_row gt_right" headers="cv">14.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 332.01,</td>
+<td class="gt_row gt_right" headers="estimate">72,887</td>
+<td class="gt_row gt_right" headers="moe">17,392</td>
+<td class="gt_row gt_right" headers="cv">14.5</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 104.01,</td>
+<td class="gt_row gt_right" headers="estimate">137,916</td>
+<td class="gt_row gt_right" headers="moe">32,601</td>
+<td class="gt_row gt_right" headers="cv">14.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 179.03,</td>
+<td class="gt_row gt_right" headers="estimate">106,234</td>
+<td class="gt_row gt_right" headers="moe">24,997</td>
+<td class="gt_row gt_right" headers="cv">14.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 206.02,</td>
+<td class="gt_row gt_right" headers="estimate">220,849</td>
+<td class="gt_row gt_right" headers="moe">51,851</td>
+<td class="gt_row gt_right" headers="cv">14.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 202.01,</td>
+<td class="gt_row gt_right" headers="estimate">164,284</td>
+<td class="gt_row gt_right" headers="moe">38,314</td>
+<td class="gt_row gt_right" headers="cv">14.2</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 607.01,</td>
+<td class="gt_row gt_right" headers="estimate">239,946</td>
+<td class="gt_row gt_right" headers="moe">55,481</td>
+<td class="gt_row gt_right" headers="cv">14.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 264.04,</td>
+<td class="gt_row gt_right" headers="estimate">107,480</td>
+<td class="gt_row gt_right" headers="moe">24,678</td>
+<td class="gt_row gt_right" headers="cv">14.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 166.02,</td>
+<td class="gt_row gt_right" headers="estimate">192,185</td>
+<td class="gt_row gt_right" headers="moe">43,951</td>
+<td class="gt_row gt_right" headers="cv">13.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 101.01,</td>
+<td class="gt_row gt_right" headers="estimate">108,095</td>
+<td class="gt_row gt_right" headers="moe">24,588</td>
+<td class="gt_row gt_right" headers="cv">13.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 134.01,</td>
+<td class="gt_row gt_right" headers="estimate">232,502</td>
+<td class="gt_row gt_right" headers="moe">52,796</td>
+<td class="gt_row gt_right" headers="cv">13.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 124.06,</td>
+<td class="gt_row gt_right" headers="estimate">55,250</td>
+<td class="gt_row gt_right" headers="moe">12,455</td>
+<td class="gt_row gt_right" headers="cv">13.7</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.03,</td>
+<td class="gt_row gt_right" headers="estimate">358,222</td>
+<td class="gt_row gt_right" headers="moe">80,410</td>
+<td class="gt_row gt_right" headers="cv">13.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 611.02,</td>
+<td class="gt_row gt_right" headers="estimate">37,404</td>
+<td class="gt_row gt_right" headers="moe">8,353</td>
+<td class="gt_row gt_right" headers="cv">13.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 605.02,</td>
+<td class="gt_row gt_right" headers="estimate">69,343</td>
+<td class="gt_row gt_right" headers="moe">15,478</td>
+<td class="gt_row gt_right" headers="cv">13.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 130.02,</td>
+<td class="gt_row gt_right" headers="estimate">223,969</td>
+<td class="gt_row gt_right" headers="moe">49,689</td>
+<td class="gt_row gt_right" headers="cv">13.5</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 314.01,</td>
+<td class="gt_row gt_right" headers="estimate">123,004</td>
+<td class="gt_row gt_right" headers="moe">27,223</td>
+<td class="gt_row gt_right" headers="cv">13.5</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 452.02,</td>
+<td class="gt_row gt_right" headers="estimate">149,120</td>
+<td class="gt_row gt_right" headers="moe">32,876</td>
+<td class="gt_row gt_right" headers="cv">13.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 119.01,</td>
+<td class="gt_row gt_right" headers="estimate">152,158</td>
+<td class="gt_row gt_right" headers="moe">32,982</td>
+<td class="gt_row gt_right" headers="cv">13.2</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 264.03,</td>
+<td class="gt_row gt_right" headers="estimate">90,288</td>
+<td class="gt_row gt_right" headers="moe">19,562</td>
+<td class="gt_row gt_right" headers="cv">13.2</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 134.02,</td>
+<td class="gt_row gt_right" headers="estimate">277,230</td>
+<td class="gt_row gt_right" headers="moe">60,033</td>
+<td class="gt_row gt_right" headers="cv">13.2</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 109.02,</td>
+<td class="gt_row gt_right" headers="estimate">201,199</td>
+<td class="gt_row gt_right" headers="moe">43,529</td>
+<td class="gt_row gt_right" headers="cv">13.2</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 201.01,</td>
+<td class="gt_row gt_right" headers="estimate">146,871</td>
+<td class="gt_row gt_right" headers="moe">31,668</td>
+<td class="gt_row gt_right" headers="cv">13.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 252,</td>
+<td class="gt_row gt_right" headers="estimate">192,294</td>
+<td class="gt_row gt_right" headers="moe">41,329</td>
+<td class="gt_row gt_right" headers="cv">13.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 152.02,</td>
+<td class="gt_row gt_right" headers="estimate">153,522</td>
+<td class="gt_row gt_right" headers="moe">32,794</td>
+<td class="gt_row gt_right" headers="cv">13.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 601,</td>
+<td class="gt_row gt_right" headers="estimate">235,188</td>
+<td class="gt_row gt_right" headers="moe">50,097</td>
+<td class="gt_row gt_right" headers="cv">12.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 168.02,</td>
+<td class="gt_row gt_right" headers="estimate">161,014</td>
+<td class="gt_row gt_right" headers="moe">34,268</td>
+<td class="gt_row gt_right" headers="cv">12.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 176.03,</td>
+<td class="gt_row gt_right" headers="estimate">130,659</td>
+<td class="gt_row gt_right" headers="moe">27,723</td>
+<td class="gt_row gt_right" headers="cv">12.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 257.02,</td>
+<td class="gt_row gt_right" headers="estimate">131,216</td>
+<td class="gt_row gt_right" headers="moe">27,788</td>
+<td class="gt_row gt_right" headers="cv">12.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 257.01,</td>
+<td class="gt_row gt_right" headers="estimate">143,548</td>
+<td class="gt_row gt_right" headers="moe">30,397</td>
+<td class="gt_row gt_right" headers="cv">12.9</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 117,</td>
+<td class="gt_row gt_right" headers="estimate">120,028</td>
+<td class="gt_row gt_right" headers="moe">25,347</td>
+<td class="gt_row gt_right" headers="cv">12.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 124.04,</td>
+<td class="gt_row gt_right" headers="estimate">40,098</td>
+<td class="gt_row gt_right" headers="moe">8,460</td>
+<td class="gt_row gt_right" headers="cv">12.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 614.02,</td>
+<td class="gt_row gt_right" headers="estimate">182,490</td>
+<td class="gt_row gt_right" headers="moe">38,386</td>
+<td class="gt_row gt_right" headers="cv">12.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 479.04,</td>
+<td class="gt_row gt_right" headers="estimate">110,218</td>
+<td class="gt_row gt_right" headers="moe">23,176</td>
+<td class="gt_row gt_right" headers="cv">12.8</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 259,</td>
+<td class="gt_row gt_right" headers="estimate">145,093</td>
+<td class="gt_row gt_right" headers="moe">30,405</td>
+<td class="gt_row gt_right" headers="cv">12.7</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 110.01,</td>
+<td class="gt_row gt_right" headers="estimate">160,553</td>
+<td class="gt_row gt_right" headers="moe">33,428</td>
+<td class="gt_row gt_right" headers="cv">12.7</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9806,</td>
+<td class="gt_row gt_right" headers="estimate">125,113</td>
+<td class="gt_row gt_right" headers="moe">25,894</td>
+<td class="gt_row gt_right" headers="cv">12.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 120.01,</td>
+<td class="gt_row gt_right" headers="estimate">82,442</td>
+<td class="gt_row gt_right" headers="moe">17,039</td>
+<td class="gt_row gt_right" headers="cv">12.6</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 351.01,</td>
+<td class="gt_row gt_right" headers="estimate">154,630</td>
+<td class="gt_row gt_right" headers="moe">31,535</td>
+<td class="gt_row gt_right" headers="cv">12.4</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 201.02,</td>
+<td class="gt_row gt_right" headers="estimate">143,865</td>
+<td class="gt_row gt_right" headers="moe">29,202</td>
+<td class="gt_row gt_right" headers="cv">12.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 128.02,</td>
+<td class="gt_row gt_right" headers="estimate">261,589</td>
+<td class="gt_row gt_right" headers="moe">52,875</td>
+<td class="gt_row gt_right" headers="cv">12.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 255.01,</td>
+<td class="gt_row gt_right" headers="estimate">175,208</td>
+<td class="gt_row gt_right" headers="moe">35,311</td>
+<td class="gt_row gt_right" headers="cv">12.3</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 330.02,</td>
+<td class="gt_row gt_right" headers="estimate">211,289</td>
+<td class="gt_row gt_right" headers="moe">42,004</td>
+<td class="gt_row gt_right" headers="cv">12.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 229.01,</td>
+<td class="gt_row gt_right" headers="estimate">130,248</td>
+<td class="gt_row gt_right" headers="moe">25,875</td>
+<td class="gt_row gt_right" headers="cv">12.1</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 163,</td>
+<td class="gt_row gt_right" headers="estimate">175,175</td>
+<td class="gt_row gt_right" headers="moe">34,641</td>
+<td class="gt_row gt_right" headers="cv">12.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟡</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 402,</td>
+<td class="gt_row gt_right" headers="estimate">221,499</td>
+<td class="gt_row gt_right" headers="moe">43,788</td>
+<td class="gt_row gt_right" headers="cv">12.0</td>
+<td class="gt_row gt_left" headers="flag">Somewhat reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 125.02,</td>
+<td class="gt_row gt_right" headers="estimate">36,959</td>
+<td class="gt_row gt_right" headers="moe">7,286</td>
+<td class="gt_row gt_right" headers="cv">12.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 328.02,</td>
+<td class="gt_row gt_right" headers="estimate">148,815</td>
+<td class="gt_row gt_right" headers="moe">29,266</td>
+<td class="gt_row gt_right" headers="cv">12.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 452.01,</td>
+<td class="gt_row gt_right" headers="estimate">204,176</td>
+<td class="gt_row gt_right" headers="moe">40,148</td>
+<td class="gt_row gt_right" headers="cv">12.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 155,</td>
+<td class="gt_row gt_right" headers="estimate">121,478</td>
+<td class="gt_row gt_right" headers="moe">23,817</td>
+<td class="gt_row gt_right" headers="cv">11.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 256,</td>
+<td class="gt_row gt_right" headers="estimate">119,951</td>
+<td class="gt_row gt_right" headers="moe">23,445</td>
+<td class="gt_row gt_right" headers="cv">11.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 231.02,</td>
+<td class="gt_row gt_right" headers="estimate">92,886</td>
+<td class="gt_row gt_right" headers="moe">18,099</td>
+<td class="gt_row gt_right" headers="cv">11.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 178.04,</td>
+<td class="gt_row gt_right" headers="estimate">170,592</td>
+<td class="gt_row gt_right" headers="moe">33,145</td>
+<td class="gt_row gt_right" headers="cv">11.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 154.02,</td>
+<td class="gt_row gt_right" headers="estimate">240,356</td>
+<td class="gt_row gt_right" headers="moe">46,660</td>
+<td class="gt_row gt_right" headers="cv">11.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 264.02,</td>
+<td class="gt_row gt_right" headers="estimate">153,000</td>
+<td class="gt_row gt_right" headers="moe">29,244</td>
+<td class="gt_row gt_right" headers="cv">11.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 427,</td>
+<td class="gt_row gt_right" headers="estimate">132,223</td>
+<td class="gt_row gt_right" headers="moe">25,186</td>
+<td class="gt_row gt_right" headers="cv">11.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 234,</td>
+<td class="gt_row gt_right" headers="estimate">91,906</td>
+<td class="gt_row gt_right" headers="moe">17,477</td>
+<td class="gt_row gt_right" headers="cv">11.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 254.03,</td>
+<td class="gt_row gt_right" headers="estimate">201,236</td>
+<td class="gt_row gt_right" headers="moe">37,957</td>
+<td class="gt_row gt_right" headers="cv">11.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 251,</td>
+<td class="gt_row gt_right" headers="estimate">230,264</td>
+<td class="gt_row gt_right" headers="moe">43,066</td>
+<td class="gt_row gt_right" headers="cv">11.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 108,</td>
+<td class="gt_row gt_right" headers="estimate">182,109</td>
+<td class="gt_row gt_right" headers="moe">33,752</td>
+<td class="gt_row gt_right" headers="cv">11.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 131.01,</td>
+<td class="gt_row gt_right" headers="estimate">226,678</td>
+<td class="gt_row gt_right" headers="moe">41,918</td>
+<td class="gt_row gt_right" headers="cv">11.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 328.01,</td>
+<td class="gt_row gt_right" headers="estimate">147,525</td>
+<td class="gt_row gt_right" headers="moe">27,223</td>
+<td class="gt_row gt_right" headers="cv">11.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 154.01,</td>
+<td class="gt_row gt_right" headers="estimate">160,114</td>
+<td class="gt_row gt_right" headers="moe">29,545</td>
+<td class="gt_row gt_right" headers="cv">11.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 210,</td>
+<td class="gt_row gt_right" headers="estimate">205,395</td>
+<td class="gt_row gt_right" headers="moe">37,776</td>
+<td class="gt_row gt_right" headers="cv">11.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 313.02,</td>
+<td class="gt_row gt_right" headers="estimate">123,110</td>
+<td class="gt_row gt_right" headers="moe">22,605</td>
+<td class="gt_row gt_right" headers="cv">11.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 109.01,</td>
+<td class="gt_row gt_right" headers="estimate">209,645</td>
+<td class="gt_row gt_right" headers="moe">38,364</td>
+<td class="gt_row gt_right" headers="cv">11.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 607.03,</td>
+<td class="gt_row gt_right" headers="estimate">182,180</td>
+<td class="gt_row gt_right" headers="moe">32,993</td>
+<td class="gt_row gt_right" headers="cv">11.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 329.02,</td>
+<td class="gt_row gt_right" headers="estimate">155,954</td>
+<td class="gt_row gt_right" headers="moe">28,219</td>
+<td class="gt_row gt_right" headers="cv">11.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 614.01,</td>
+<td class="gt_row gt_right" headers="estimate">174,017</td>
+<td class="gt_row gt_right" headers="moe">31,376</td>
+<td class="gt_row gt_right" headers="cv">11.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 205,</td>
+<td class="gt_row gt_right" headers="estimate">267,491</td>
+<td class="gt_row gt_right" headers="moe">48,219</td>
+<td class="gt_row gt_right" headers="cv">11.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 207.02,</td>
+<td class="gt_row gt_right" headers="estimate">170,188</td>
+<td class="gt_row gt_right" headers="moe">30,651</td>
+<td class="gt_row gt_right" headers="cv">10.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 118,</td>
+<td class="gt_row gt_right" headers="estimate">62,937</td>
+<td class="gt_row gt_right" headers="moe">11,313</td>
+<td class="gt_row gt_right" headers="cv">10.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 232,</td>
+<td class="gt_row gt_right" headers="estimate">129,058</td>
+<td class="gt_row gt_right" headers="moe">23,096</td>
+<td class="gt_row gt_right" headers="cv">10.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 157.01,</td>
+<td class="gt_row gt_right" headers="estimate">142,953</td>
+<td class="gt_row gt_right" headers="moe">25,573</td>
+<td class="gt_row gt_right" headers="cv">10.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 610,</td>
+<td class="gt_row gt_right" headers="estimate">120,718</td>
+<td class="gt_row gt_right" headers="moe">21,492</td>
+<td class="gt_row gt_right" headers="cv">10.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 230.03,</td>
+<td class="gt_row gt_right" headers="estimate">125,732</td>
+<td class="gt_row gt_right" headers="moe">22,162</td>
+<td class="gt_row gt_right" headers="cv">10.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 132,</td>
+<td class="gt_row gt_right" headers="estimate">296,759</td>
+<td class="gt_row gt_right" headers="moe">52,275</td>
+<td class="gt_row gt_right" headers="cv">10.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 615.05,</td>
+<td class="gt_row gt_right" headers="estimate">341,447</td>
+<td class="gt_row gt_right" headers="moe">59,984</td>
+<td class="gt_row gt_right" headers="cv">10.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 262.02,</td>
+<td class="gt_row gt_right" headers="estimate">121,796</td>
+<td class="gt_row gt_right" headers="moe">21,368</td>
+<td class="gt_row gt_right" headers="cv">10.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 111.01,</td>
+<td class="gt_row gt_right" headers="estimate">157,612</td>
+<td class="gt_row gt_right" headers="moe">27,426</td>
+<td class="gt_row gt_right" headers="cv">10.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 113,</td>
+<td class="gt_row gt_right" headers="estimate">77,411</td>
+<td class="gt_row gt_right" headers="moe">13,434</td>
+<td class="gt_row gt_right" headers="cv">10.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 303.01,</td>
+<td class="gt_row gt_right" headers="estimate">210,454</td>
+<td class="gt_row gt_right" headers="moe">36,001</td>
+<td class="gt_row gt_right" headers="cv">10.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 261,</td>
+<td class="gt_row gt_right" headers="estimate">136,884</td>
+<td class="gt_row gt_right" headers="moe">23,326</td>
+<td class="gt_row gt_right" headers="cv">10.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 401,</td>
+<td class="gt_row gt_right" headers="estimate">184,252</td>
+<td class="gt_row gt_right" headers="moe">31,294</td>
+<td class="gt_row gt_right" headers="cv">10.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 260.04,</td>
+<td class="gt_row gt_right" headers="estimate">117,256</td>
+<td class="gt_row gt_right" headers="moe">19,822</td>
+<td class="gt_row gt_right" headers="cv">10.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 302.02,</td>
+<td class="gt_row gt_right" headers="estimate">147,357</td>
+<td class="gt_row gt_right" headers="moe">24,832</td>
+<td class="gt_row gt_right" headers="cv">10.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 156,</td>
+<td class="gt_row gt_right" headers="estimate">128,285</td>
+<td class="gt_row gt_right" headers="moe">21,599</td>
+<td class="gt_row gt_right" headers="cv">10.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 304,</td>
+<td class="gt_row gt_right" headers="estimate">197,801</td>
+<td class="gt_row gt_right" headers="moe">33,255</td>
+<td class="gt_row gt_right" headers="cv">10.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 254.01,</td>
+<td class="gt_row gt_right" headers="estimate">202,214</td>
+<td class="gt_row gt_right" headers="moe">33,813</td>
+<td class="gt_row gt_right" headers="cv">10.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 309,</td>
+<td class="gt_row gt_right" headers="estimate">251,552</td>
+<td class="gt_row gt_right" headers="moe">41,964</td>
+<td class="gt_row gt_right" headers="cv">10.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 119.02,</td>
+<td class="gt_row gt_right" headers="estimate">106,352</td>
+<td class="gt_row gt_right" headers="moe">17,713</td>
+<td class="gt_row gt_right" headers="cv">10.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 326.02,</td>
+<td class="gt_row gt_right" headers="estimate">154,620</td>
+<td class="gt_row gt_right" headers="moe">25,729</td>
+<td class="gt_row gt_right" headers="cv">10.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 214,</td>
+<td class="gt_row gt_right" headers="estimate">224,258</td>
+<td class="gt_row gt_right" headers="moe">37,293</td>
+<td class="gt_row gt_right" headers="cv">10.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 313.01,</td>
+<td class="gt_row gt_right" headers="estimate">128,643</td>
+<td class="gt_row gt_right" headers="moe">21,349</td>
+<td class="gt_row gt_right" headers="cv">10.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 162,</td>
+<td class="gt_row gt_right" headers="estimate">205,089</td>
+<td class="gt_row gt_right" headers="moe">34,008</td>
+<td class="gt_row gt_right" headers="cv">10.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 126.02,</td>
+<td class="gt_row gt_right" headers="estimate">253,369</td>
+<td class="gt_row gt_right" headers="moe">41,744</td>
+<td class="gt_row gt_right" headers="cv">10.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 125.03,</td>
+<td class="gt_row gt_right" headers="estimate">51,118</td>
+<td class="gt_row gt_right" headers="moe">8,385</td>
+<td class="gt_row gt_right" headers="cv">10.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 254.02,</td>
+<td class="gt_row gt_right" headers="estimate">181,005</td>
+<td class="gt_row gt_right" headers="moe">29,681</td>
+<td class="gt_row gt_right" headers="cv">10.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 166.01,</td>
+<td class="gt_row gt_right" headers="estimate">178,611</td>
+<td class="gt_row gt_right" headers="moe">29,263</td>
+<td class="gt_row gt_right" headers="cv">10.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 124.05,</td>
+<td class="gt_row gt_right" headers="estimate">134,972</td>
+<td class="gt_row gt_right" headers="moe">22,103</td>
+<td class="gt_row gt_right" headers="cv">10.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 153,</td>
+<td class="gt_row gt_right" headers="estimate">189,007</td>
+<td class="gt_row gt_right" headers="moe">30,888</td>
+<td class="gt_row gt_right" headers="cv">9.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 131.02,</td>
+<td class="gt_row gt_right" headers="estimate">263,713</td>
+<td class="gt_row gt_right" headers="moe">42,872</td>
+<td class="gt_row gt_right" headers="cv">9.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 228.02,</td>
+<td class="gt_row gt_right" headers="estimate">150,790</td>
+<td class="gt_row gt_right" headers="moe">24,506</td>
+<td class="gt_row gt_right" headers="cv">9.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 111.02,</td>
+<td class="gt_row gt_right" headers="estimate">104,332</td>
+<td class="gt_row gt_right" headers="moe">16,778</td>
+<td class="gt_row gt_right" headers="cv">9.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 202.02,</td>
+<td class="gt_row gt_right" headers="estimate">124,862</td>
+<td class="gt_row gt_right" headers="moe">19,661</td>
+<td class="gt_row gt_right" headers="cv">9.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 216,</td>
+<td class="gt_row gt_right" headers="estimate">215,979</td>
+<td class="gt_row gt_right" headers="moe">33,920</td>
+<td class="gt_row gt_right" headers="cv">9.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 106,</td>
+<td class="gt_row gt_right" headers="estimate">98,899</td>
+<td class="gt_row gt_right" headers="moe">15,512</td>
+<td class="gt_row gt_right" headers="cv">9.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 130.01,</td>
+<td class="gt_row gt_right" headers="estimate">202,329</td>
+<td class="gt_row gt_right" headers="moe">31,594</td>
+<td class="gt_row gt_right" headers="cv">9.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 159,</td>
+<td class="gt_row gt_right" headers="estimate">121,105</td>
+<td class="gt_row gt_right" headers="moe">18,861</td>
+<td class="gt_row gt_right" headers="cv">9.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 476,</td>
+<td class="gt_row gt_right" headers="estimate">172,423</td>
+<td class="gt_row gt_right" headers="moe">26,749</td>
+<td class="gt_row gt_right" headers="cv">9.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 260.01,</td>
+<td class="gt_row gt_right" headers="estimate">121,869</td>
+<td class="gt_row gt_right" headers="moe">18,902</td>
+<td class="gt_row gt_right" headers="cv">9.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 206.01,</td>
+<td class="gt_row gt_right" headers="estimate">201,837</td>
+<td class="gt_row gt_right" headers="moe">31,291</td>
+<td class="gt_row gt_right" headers="cv">9.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 178.01,</td>
+<td class="gt_row gt_right" headers="estimate">97,681</td>
+<td class="gt_row gt_right" headers="moe">15,105</td>
+<td class="gt_row gt_right" headers="cv">9.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 228.03,</td>
+<td class="gt_row gt_right" headers="estimate">167,133</td>
+<td class="gt_row gt_right" headers="moe">25,781</td>
+<td class="gt_row gt_right" headers="cv">9.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 120.02,</td>
+<td class="gt_row gt_right" headers="estimate">98,558</td>
+<td class="gt_row gt_right" headers="moe">15,160</td>
+<td class="gt_row gt_right" headers="cv">9.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 133,</td>
+<td class="gt_row gt_right" headers="estimate">282,307</td>
+<td class="gt_row gt_right" headers="moe">43,329</td>
+<td class="gt_row gt_right" headers="cv">9.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 305,</td>
+<td class="gt_row gt_right" headers="estimate">161,160</td>
+<td class="gt_row gt_right" headers="moe">24,700</td>
+<td class="gt_row gt_right" headers="cv">9.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 152.01,</td>
+<td class="gt_row gt_right" headers="estimate">113,729</td>
+<td class="gt_row gt_right" headers="moe">17,331</td>
+<td class="gt_row gt_right" headers="cv">9.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 306,</td>
+<td class="gt_row gt_right" headers="estimate">247,520</td>
+<td class="gt_row gt_right" headers="moe">37,593</td>
+<td class="gt_row gt_right" headers="cv">9.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 264.01,</td>
+<td class="gt_row gt_right" headers="estimate">99,082</td>
+<td class="gt_row gt_right" headers="moe">15,031</td>
+<td class="gt_row gt_right" headers="cv">9.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 213,</td>
+<td class="gt_row gt_right" headers="estimate">233,933</td>
+<td class="gt_row gt_right" headers="moe">35,322</td>
+<td class="gt_row gt_right" headers="cv">9.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 354,</td>
+<td class="gt_row gt_right" headers="estimate">150,433</td>
+<td class="gt_row gt_right" headers="moe">22,637</td>
+<td class="gt_row gt_right" headers="cv">9.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 314.02,</td>
+<td class="gt_row gt_right" headers="estimate">125,450</td>
+<td class="gt_row gt_right" headers="moe">18,835</td>
+<td class="gt_row gt_right" headers="cv">9.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 332.04,</td>
+<td class="gt_row gt_right" headers="estimate">95,025</td>
+<td class="gt_row gt_right" headers="moe">14,187</td>
+<td class="gt_row gt_right" headers="cv">9.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 353,</td>
+<td class="gt_row gt_right" headers="estimate">134,404</td>
+<td class="gt_row gt_right" headers="moe">19,983</td>
+<td class="gt_row gt_right" headers="cv">9.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 170,</td>
+<td class="gt_row gt_right" headers="estimate">240,601</td>
+<td class="gt_row gt_right" headers="moe">35,209</td>
+<td class="gt_row gt_right" headers="cv">8.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 158.01,</td>
+<td class="gt_row gt_right" headers="estimate">148,809</td>
+<td class="gt_row gt_right" headers="moe">21,640</td>
+<td class="gt_row gt_right" headers="cv">8.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 218,</td>
+<td class="gt_row gt_right" headers="estimate">228,522</td>
+<td class="gt_row gt_right" headers="moe">33,205</td>
+<td class="gt_row gt_right" headers="cv">8.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9805.01,</td>
+<td class="gt_row gt_right" headers="estimate">12,443</td>
+<td class="gt_row gt_right" headers="moe">1,808</td>
+<td class="gt_row gt_right" headers="cv">8.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 207.01,</td>
+<td class="gt_row gt_right" headers="estimate">237,247</td>
+<td class="gt_row gt_right" headers="moe">34,430</td>
+<td class="gt_row gt_right" headers="cv">8.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 478.02,</td>
+<td class="gt_row gt_right" headers="estimate">174,085</td>
+<td class="gt_row gt_right" headers="moe">25,241</td>
+<td class="gt_row gt_right" headers="cv">8.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 208.01,</td>
+<td class="gt_row gt_right" headers="estimate">130,181</td>
+<td class="gt_row gt_right" headers="moe">18,816</td>
+<td class="gt_row gt_right" headers="cv">8.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 129.02,</td>
+<td class="gt_row gt_right" headers="estimate">184,801</td>
+<td class="gt_row gt_right" headers="moe">26,487</td>
+<td class="gt_row gt_right" headers="cv">8.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 158.02,</td>
+<td class="gt_row gt_right" headers="estimate">184,240</td>
+<td class="gt_row gt_right" headers="moe">26,355</td>
+<td class="gt_row gt_right" headers="cv">8.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 121,</td>
+<td class="gt_row gt_right" headers="estimate">104,544</td>
+<td class="gt_row gt_right" headers="moe">14,953</td>
+<td class="gt_row gt_right" headers="cv">8.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 478.01,</td>
+<td class="gt_row gt_right" headers="estimate">156,389</td>
+<td class="gt_row gt_right" headers="moe">22,317</td>
+<td class="gt_row gt_right" headers="cv">8.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 208.02,</td>
+<td class="gt_row gt_right" headers="estimate">165,812</td>
+<td class="gt_row gt_right" headers="moe">23,608</td>
+<td class="gt_row gt_right" headers="cv">8.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 227.02,</td>
+<td class="gt_row gt_right" headers="estimate">253,344</td>
+<td class="gt_row gt_right" headers="moe">36,038</td>
+<td class="gt_row gt_right" headers="cv">8.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 228.01,</td>
+<td class="gt_row gt_right" headers="estimate">215,858</td>
+<td class="gt_row gt_right" headers="moe">30,451</td>
+<td class="gt_row gt_right" headers="cv">8.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 230.01,</td>
+<td class="gt_row gt_right" headers="estimate">101,394</td>
+<td class="gt_row gt_right" headers="moe">14,274</td>
+<td class="gt_row gt_right" headers="cv">8.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 229.03,</td>
+<td class="gt_row gt_right" headers="estimate">171,357</td>
+<td class="gt_row gt_right" headers="moe">24,122</td>
+<td class="gt_row gt_right" headers="cv">8.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 263.03,</td>
+<td class="gt_row gt_right" headers="estimate">105,409</td>
+<td class="gt_row gt_right" headers="moe">14,834</td>
+<td class="gt_row gt_right" headers="cv">8.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 135,</td>
+<td class="gt_row gt_right" headers="estimate">202,486</td>
+<td class="gt_row gt_right" headers="moe">28,494</td>
+<td class="gt_row gt_right" headers="cv">8.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 168.01,</td>
+<td class="gt_row gt_right" headers="estimate">199,116</td>
+<td class="gt_row gt_right" headers="moe">27,826</td>
+<td class="gt_row gt_right" headers="cv">8.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 215,</td>
+<td class="gt_row gt_right" headers="estimate">238,724</td>
+<td class="gt_row gt_right" headers="moe">33,196</td>
+<td class="gt_row gt_right" headers="cv">8.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 253,</td>
+<td class="gt_row gt_right" headers="estimate">204,366</td>
+<td class="gt_row gt_right" headers="moe">28,414</td>
+<td class="gt_row gt_right" headers="cv">8.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 229.02,</td>
+<td class="gt_row gt_right" headers="estimate">196,335</td>
+<td class="gt_row gt_right" headers="moe">27,257</td>
+<td class="gt_row gt_right" headers="cv">8.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 123.02,</td>
+<td class="gt_row gt_right" headers="estimate">65,384</td>
+<td class="gt_row gt_right" headers="moe">9,009</td>
+<td class="gt_row gt_right" headers="cv">8.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 171.02,</td>
+<td class="gt_row gt_right" headers="estimate">233,049</td>
+<td class="gt_row gt_right" headers="moe">32,071</td>
+<td class="gt_row gt_right" headers="cv">8.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 160,</td>
+<td class="gt_row gt_right" headers="estimate">112,755</td>
+<td class="gt_row gt_right" headers="moe">15,512</td>
+<td class="gt_row gt_right" headers="cv">8.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 262.01,</td>
+<td class="gt_row gt_right" headers="estimate">119,242</td>
+<td class="gt_row gt_right" headers="moe">16,369</td>
+<td class="gt_row gt_right" headers="cv">8.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 302.01,</td>
+<td class="gt_row gt_right" headers="estimate">138,590</td>
+<td class="gt_row gt_right" headers="moe">19,016</td>
+<td class="gt_row gt_right" headers="cv">8.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 167,</td>
+<td class="gt_row gt_right" headers="estimate">237,606</td>
+<td class="gt_row gt_right" headers="moe">32,409</td>
+<td class="gt_row gt_right" headers="cv">8.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 227.04,</td>
+<td class="gt_row gt_right" headers="estimate">306,558</td>
+<td class="gt_row gt_right" headers="moe">41,509</td>
+<td class="gt_row gt_right" headers="cv">8.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 263.02,</td>
+<td class="gt_row gt_right" headers="estimate">109,479</td>
+<td class="gt_row gt_right" headers="moe">14,786</td>
+<td class="gt_row gt_right" headers="cv">8.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 151,</td>
+<td class="gt_row gt_right" headers="estimate">157,702</td>
+<td class="gt_row gt_right" headers="moe">21,296</td>
+<td class="gt_row gt_right" headers="cv">8.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 105,</td>
+<td class="gt_row gt_right" headers="estimate">189,742</td>
+<td class="gt_row gt_right" headers="moe">25,538</td>
+<td class="gt_row gt_right" headers="cv">8.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 263.01,</td>
+<td class="gt_row gt_right" headers="estimate">102,785</td>
+<td class="gt_row gt_right" headers="moe">13,717</td>
+<td class="gt_row gt_right" headers="cv">8.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 311,</td>
+<td class="gt_row gt_right" headers="estimate">203,808</td>
+<td class="gt_row gt_right" headers="moe">27,156</td>
+<td class="gt_row gt_right" headers="cv">8.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 255.02,</td>
+<td class="gt_row gt_right" headers="estimate">180,552</td>
+<td class="gt_row gt_right" headers="moe">24,031</td>
+<td class="gt_row gt_right" headers="cv">8.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 331,</td>
+<td class="gt_row gt_right" headers="estimate">141,630</td>
+<td class="gt_row gt_right" headers="moe">18,825</td>
+<td class="gt_row gt_right" headers="cv">8.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 260.03,</td>
+<td class="gt_row gt_right" headers="estimate">133,751</td>
+<td class="gt_row gt_right" headers="moe">17,669</td>
+<td class="gt_row gt_right" headers="cv">8.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 226,</td>
+<td class="gt_row gt_right" headers="estimate">252,541</td>
+<td class="gt_row gt_right" headers="moe">33,331</td>
+<td class="gt_row gt_right" headers="cv">8.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 310,</td>
+<td class="gt_row gt_right" headers="estimate">196,469</td>
+<td class="gt_row gt_right" headers="moe">25,888</td>
+<td class="gt_row gt_right" headers="cv">8.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 180,</td>
+<td class="gt_row gt_right" headers="estimate">184,219</td>
+<td class="gt_row gt_right" headers="moe">24,270</td>
+<td class="gt_row gt_right" headers="cv">8.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 177,</td>
+<td class="gt_row gt_right" headers="estimate">179,564</td>
+<td class="gt_row gt_right" headers="moe">23,577</td>
+<td class="gt_row gt_right" headers="cv">8.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 329.01,</td>
+<td class="gt_row gt_right" headers="estimate">154,147</td>
+<td class="gt_row gt_right" headers="moe">20,164</td>
+<td class="gt_row gt_right" headers="cv">8.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 327,</td>
+<td class="gt_row gt_right" headers="estimate">166,070</td>
+<td class="gt_row gt_right" headers="moe">21,589</td>
+<td class="gt_row gt_right" headers="cv">7.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 428,</td>
+<td class="gt_row gt_right" headers="estimate">327,820</td>
+<td class="gt_row gt_right" headers="moe">42,463</td>
+<td class="gt_row gt_right" headers="cv">7.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 110.02,</td>
+<td class="gt_row gt_right" headers="estimate">165,429</td>
+<td class="gt_row gt_right" headers="moe">21,328</td>
+<td class="gt_row gt_right" headers="cv">7.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 233,</td>
+<td class="gt_row gt_right" headers="estimate">77,513</td>
+<td class="gt_row gt_right" headers="moe">9,965</td>
+<td class="gt_row gt_right" headers="cv">7.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 326.01,</td>
+<td class="gt_row gt_right" headers="estimate">134,672</td>
+<td class="gt_row gt_right" headers="moe">17,229</td>
+<td class="gt_row gt_right" headers="cv">7.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 204.01,</td>
+<td class="gt_row gt_right" headers="estimate">219,751</td>
+<td class="gt_row gt_right" headers="moe">28,052</td>
+<td class="gt_row gt_right" headers="cv">7.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 212,</td>
+<td class="gt_row gt_right" headers="estimate">236,262</td>
+<td class="gt_row gt_right" headers="moe">29,880</td>
+<td class="gt_row gt_right" headers="cv">7.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 129.01,</td>
+<td class="gt_row gt_right" headers="estimate">231,259</td>
+<td class="gt_row gt_right" headers="moe">29,135</td>
+<td class="gt_row gt_right" headers="cv">7.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 477.01,</td>
+<td class="gt_row gt_right" headers="estimate">113,909</td>
+<td class="gt_row gt_right" headers="moe">14,230</td>
+<td class="gt_row gt_right" headers="cv">7.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 209,</td>
+<td class="gt_row gt_right" headers="estimate">167,758</td>
+<td class="gt_row gt_right" headers="moe">20,943</td>
+<td class="gt_row gt_right" headers="cv">7.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 217,</td>
+<td class="gt_row gt_right" headers="estimate">184,081</td>
+<td class="gt_row gt_right" headers="moe">22,956</td>
+<td class="gt_row gt_right" headers="cv">7.6</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 479.02,</td>
+<td class="gt_row gt_right" headers="estimate">143,846</td>
+<td class="gt_row gt_right" headers="moe">17,845</td>
+<td class="gt_row gt_right" headers="cv">7.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 171.01,</td>
+<td class="gt_row gt_right" headers="estimate">215,027</td>
+<td class="gt_row gt_right" headers="moe">26,608</td>
+<td class="gt_row gt_right" headers="cv">7.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 112,</td>
+<td class="gt_row gt_right" headers="estimate">192,950</td>
+<td class="gt_row gt_right" headers="moe">23,854</td>
+<td class="gt_row gt_right" headers="cv">7.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 169,</td>
+<td class="gt_row gt_right" headers="estimate">172,888</td>
+<td class="gt_row gt_right" headers="moe">21,180</td>
+<td class="gt_row gt_right" headers="cv">7.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 165,</td>
+<td class="gt_row gt_right" headers="estimate">191,223</td>
+<td class="gt_row gt_right" headers="moe">23,299</td>
+<td class="gt_row gt_right" headers="cv">7.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 312.02,</td>
+<td class="gt_row gt_right" headers="estimate">145,342</td>
+<td class="gt_row gt_right" headers="moe">17,524</td>
+<td class="gt_row gt_right" headers="cv">7.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 479.03,</td>
+<td class="gt_row gt_right" headers="estimate">135,748</td>
+<td class="gt_row gt_right" headers="moe">16,357</td>
+<td class="gt_row gt_right" headers="cv">7.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 312.01,</td>
+<td class="gt_row gt_right" headers="estimate">110,227</td>
+<td class="gt_row gt_right" headers="moe">13,259</td>
+<td class="gt_row gt_right" headers="cv">7.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 103,</td>
+<td class="gt_row gt_right" headers="estimate">188,371</td>
+<td class="gt_row gt_right" headers="moe">22,589</td>
+<td class="gt_row gt_right" headers="cv">7.3</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 426.01,</td>
+<td class="gt_row gt_right" headers="estimate">125,185</td>
+<td class="gt_row gt_right" headers="moe">14,885</td>
+<td class="gt_row gt_right" headers="cv">7.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 204.02,</td>
+<td class="gt_row gt_right" headers="estimate">173,886</td>
+<td class="gt_row gt_right" headers="moe">20,560</td>
+<td class="gt_row gt_right" headers="cv">7.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 352.02,</td>
+<td class="gt_row gt_right" headers="estimate">127,057</td>
+<td class="gt_row gt_right" headers="moe">14,822</td>
+<td class="gt_row gt_right" headers="cv">7.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 477.02,</td>
+<td class="gt_row gt_right" headers="estimate">159,917</td>
+<td class="gt_row gt_right" headers="moe">18,614</td>
+<td class="gt_row gt_right" headers="cv">7.1</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 451,</td>
+<td class="gt_row gt_right" headers="estimate">198,912</td>
+<td class="gt_row gt_right" headers="moe">22,996</td>
+<td class="gt_row gt_right" headers="cv">7.0</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 352.01,</td>
+<td class="gt_row gt_right" headers="estimate">134,960</td>
+<td class="gt_row gt_right" headers="moe">15,390</td>
+<td class="gt_row gt_right" headers="cv">6.9</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 301.01,</td>
+<td class="gt_row gt_right" headers="estimate">144,463</td>
+<td class="gt_row gt_right" headers="moe">16,196</td>
+<td class="gt_row gt_right" headers="cv">6.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 426.02,</td>
+<td class="gt_row gt_right" headers="estimate">191,155</td>
+<td class="gt_row gt_right" headers="moe">21,372</td>
+<td class="gt_row gt_right" headers="cv">6.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 126.01,</td>
+<td class="gt_row gt_right" headers="estimate">212,473</td>
+<td class="gt_row gt_right" headers="moe">23,490</td>
+<td class="gt_row gt_right" headers="cv">6.7</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 203,</td>
+<td class="gt_row gt_right" headers="estimate">191,391</td>
+<td class="gt_row gt_right" headers="moe">20,450</td>
+<td class="gt_row gt_right" headers="cv">6.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 164,</td>
+<td class="gt_row gt_right" headers="estimate">204,029</td>
+<td class="gt_row gt_right" headers="moe">21,727</td>
+<td class="gt_row gt_right" headers="cv">6.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 301.02,</td>
+<td class="gt_row gt_right" headers="estimate">200,300</td>
+<td class="gt_row gt_right" headers="moe">21,322</td>
+<td class="gt_row gt_right" headers="cv">6.5</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 211,</td>
+<td class="gt_row gt_right" headers="estimate">242,331</td>
+<td class="gt_row gt_right" headers="moe">25,478</td>
+<td class="gt_row gt_right" headers="cv">6.4</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 260.02,</td>
+<td class="gt_row gt_right" headers="estimate">146,520</td>
+<td class="gt_row gt_right" headers="moe">15,058</td>
+<td class="gt_row gt_right" headers="cv">6.2</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🟢</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 307,</td>
+<td class="gt_row gt_right" headers="estimate">206,566</td>
+<td class="gt_row gt_right" headers="moe">19,639</td>
+<td class="gt_row gt_right" headers="cv">5.8</td>
+<td class="gt_row gt_left" headers="flag">Reliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🔴</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9802,</td>
+<td class="gt_row gt_right" headers="estimate">NA</td>
+<td class="gt_row gt_right" headers="moe">NA</td>
+<td class="gt_row gt_right" headers="cv">NA</td>
+<td class="gt_row gt_left" headers="flag">Unreliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🔴</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9804.01,</td>
+<td class="gt_row gt_right" headers="estimate">NA</td>
+<td class="gt_row gt_right" headers="moe">NA</td>
+<td class="gt_row gt_right" headers="cv">NA</td>
+<td class="gt_row gt_left" headers="flag">Unreliable</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="dot">🔴</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9901,</td>
+<td class="gt_row gt_right" headers="estimate">NA</td>
+<td class="gt_row gt_right" headers="moe">NA</td>
+<td class="gt_row gt_right" headers="cv">NA</td>
+<td class="gt_row gt_left" headers="flag">Unreliable</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="dot">🔴</td>
+<td class="gt_row gt_left" headers="NAME">Census Tract 9902,</td>
+<td class="gt_row gt_right" headers="estimate">NA</td>
+<td class="gt_row gt_right" headers="moe">NA</td>
+<td class="gt_row gt_right" headers="cv">NA</td>
+<td class="gt_row gt_left" headers="flag">Unreliable</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_sourcenotes odd">
+<td colspan="6" class="gt_sourcenote">Reliability thresholds follow Jurjevich et al. (2018): CV &lt; 12% reliable, 12–40% somewhat reliable, &gt; 40% unreliable.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> geom_to_sf) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> significant), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">linewidth =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Tract by Statistical Significance&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Assessing the Statistical Significance of Mean Household </span><span class="sc">\n</span><span class="st">Income Changes: ACS 2015 vs. ACS 2020&quot;</span>,  <span class="at">fill =</span> <span class="st">&quot;Legend&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;FALSE&quot;</span> <span class="ot">=</span> <span class="st">&quot;limegreen&quot;</span>, <span class="st">&quot;TRUE&quot;</span> <span class="ot">=</span> <span class="st">&quot;maroon&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">16</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="dv">8</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;italic&quot;</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="sc">-</span><span class="dv">90</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -4669,250 +7090,249 @@ vertical-align: -.125em;
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Verify the Claim: Before the world changed: New census data looks at pre-Covid San Francisco&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Sara Cerami&quot;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> September 18, 2026</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: &quot;Show code&quot;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: true</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>In 2022, the SF Standard, a San Francisco news outlet, published an article entitled, &quot;Before the world changed: New census data looks at pre-Covid San Francisco: The latest ACS five-year study gives robust information on the city’s neighborhoods.&quot; It was comprised of a number of various maps and accompanying reports documenting how San Francisco&#39;s demographics shifted between the recently released 5-year American Community Survey (2016-2020) and the prior most recent non overlapping survey (2011-2015). The first map highlights the percent change of average household income in each San Francisco zipcode between the two 5-year ACS reports. It does not mention its methodology or approach to analyzing the data. I am interested in knowing if it was incorporated or addressed in the calculation of the percent change.        </span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>The article does not explicitly say what variable it is using to calculate the average household income per zipcode, so to be sure I was on the right track, I pulled both the median household income as well as the mean household income (DP03_0063E). Comparing the two forms of averages, it was evident that the article used mean. The mean household income data accounts for inflation, calculated based on the year the report is issued. Additionally, median household income is top-coded in 5-year ACS tract level data, meaning that there is a cap on the highest income to protect privacy. While it may not impact the true median, it is a notable decision from the Census Bureau.  </span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>The two ACS reports do not overlap.</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;CA&quot;</span>,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2020</span>,</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">survey =</span> <span class="st">&quot;acs5&quot;</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">moe_pct =</span> moe <span class="sc">/</span> estimate <span class="sc">*</span> <span class="dv">100</span>)</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">reliability =</span> <span class="fu">case_when</span>(</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    moe_pct <span class="sc">&lt;</span> <span class="dv">5</span>  <span class="sc">~</span> <span class="st">&quot;High confidence&quot;</span>,</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    moe_pct <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Moderate&quot;</span>,</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>         <span class="sc">~</span> <span class="st">&quot;Low confidence&quot;</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="sc">%&gt;%</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(moe_pct)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot;San Francisco County, California&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot;Census&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(NAME, moe), <span class="at">y =</span> estimate)) <span class="sc">+</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;maroon&quot;</span>) <span class="sc">+</span></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> estimate <span class="sc">-</span> moe, <span class="at">ymax =</span> estimate <span class="sc">+</span> moe), <span class="at">width =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">12</span>,</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;SF Mean Household Income Estimates by Largest Marging of Error&quot;</span>,</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;San Francisco Census Tracts, ACS 2020 5-year estimates&quot;</span>,</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Tract&quot;</span>,</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Mean Household Income and MOE&quot;</span></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>This graph illustrates the notably high MOE for certain tracts. Upon further review, the tracts with the highest rate of margin of error are in areas with low resident density. </span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>Because I am not calculating a rate from two separate counts, and because mean is an aggregate of data, not a count, moe_prop() does not apply here. </span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.   </span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>get_mean_hh_income_sf <span class="ot">&lt;-</span> <span class="cf">function</span>(yr) {</span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_acs</span>(</span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>    <span class="at">state     =</span> <span class="st">&quot;CA&quot;</span>,</span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">year      =</span> yr,</span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">survey    =</span> <span class="st">&quot;acs5&quot;</span></span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">paste0</span>(yr <span class="sc">-</span> <span class="dv">4</span>, <span class="st">&quot;-&quot;</span>, yr))</span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>mean_hh_income_sf_change <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_mean_hh_income_sf</span>(<span class="dv">2015</span>),</span>
-<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_mean_hh_income_sf</span>(<span class="dv">2020</span>)</span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>mean_hh_income_sf_new <span class="ot">&lt;-</span> mean_hh_income_sf_change <span class="sc">%&gt;%</span></span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, NAME, period, estimate, moe) <span class="sc">%&gt;%</span></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from  =</span> period,</span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(estimate, moe)</span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="ot">&lt;-</span> mean_hh_income_sf_new <span class="sc">%&gt;%</span></span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">change   =</span> <span class="st">`</span><span class="at">estimate_2016-2020</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">estimate_2011-2015</span><span class="st">`</span>,</span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_1     =</span> <span class="st">`</span><span class="at">moe_2011-2015</span><span class="st">`</span> <span class="sc">/</span> <span class="fl">1.645</span>,</span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_2     =</span> <span class="st">`</span><span class="at">moe_2016-2020</span><span class="st">`</span> <span class="sc">/</span> <span class="fl">1.645</span>,</span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_diff  =</span> <span class="fu">sqrt</span>(se_1<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> se_2<span class="sc">^</span><span class="dv">2</span>),</span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    <span class="at">moe_diff =</span> se_diff <span class="sc">*</span> <span class="fl">1.645</span>,</span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">z        =</span> change <span class="sc">/</span> se_diff,</span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">significant =</span> <span class="fu">abs</span>(z) <span class="sc">&gt;</span> <span class="fl">1.645</span></span>
-<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="sc">%&gt;%</span></span>
-<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(significant)</span>
-<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv =</span> (moe <span class="sc">/</span> <span class="fl">1.645</span>) <span class="sc">/</span> estimate <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>    <span class="at">dot =</span> <span class="fu">case_when</span>(</span>
-<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;</span> <span class="dv">12</span>  <span class="sc">~</span> <span class="st">&quot;🟢&quot;</span>,</span>
-<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;🟡&quot;</span>,</span>
-<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>     <span class="sc">~</span> <span class="st">&quot;🔴&quot;</span></span>
-<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>    <span class="at">flag =</span> <span class="fu">case_when</span>(</span>
-<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;</span> <span class="dv">12</span>  <span class="sc">~</span> <span class="st">&quot;Reliable&quot;</span>,</span>
-<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;Somewhat reliable&quot;</span>,</span>
-<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>     <span class="sc">~</span> <span class="st">&quot;Unreliable&quot;</span></span>
-<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot; San Francisco County, California&quot;</span>)</span>
-<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cv)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dot, NAME, estimate, moe, cv, flag)</span>
-<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="sc">%&gt;%</span></span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(estimate, moe), <span class="at">decimals =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> cv, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
-<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">dot      =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME     =</span> <span class="st">&quot;Tract&quot;</span>,</span>
-<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="st">&quot;Estimate&quot;</span>,</span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">moe      =</span> <span class="st">&quot;MOE&quot;</span>,</span>
-<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv       =</span> <span class="st">&quot;CV (%)&quot;</span>,</span>
-<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>    <span class="at">flag     =</span> <span class="st">&quot;Reliability&quot;</span></span>
-<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> dot) <span class="sc">%&gt;%</span></span>
-<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
-<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">&quot;Mean Household Income by San Francisco Census Tract&quot;</span>,</span>
-<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;San Francisco Census Tracts, ACS 2020 5-year estimates&quot;</span></span>
-<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
-<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Reliability thresholds follow Jurjevich et al. (2018): CV &lt; 12% reliable, 12–40% somewhat reliable, &gt; 40% unreliable.&quot;</span></span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>acs_2015 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
-<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
-<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
-<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
-<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2015</span>,</span>
-<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;CA&quot;</span>,</span>
-<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">geometry =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">progress_bar =</span> <span class="cn">FALSE</span></span>
-<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>acs_2020 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
-<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
-<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
-<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
-<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2020</span>,</span>
-<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;CA&quot;</span>,</span>
-<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">geometry =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">progress_bar =</span> <span class="cn">FALSE</span></span>
-<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="ot">&lt;-</span> hh_income_tested <span class="sc">%&gt;%</span></span>
-<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(acs_2015 <span class="sc">%&gt;%</span> <span class="fu">select</span>(GEOID, geometry), <span class="at">by =</span> <span class="st">&#39;GEOID&#39;</span>)</span>
-<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="ot">&lt;-</span> hh_income_tested <span class="sc">%&gt;%</span></span>
-<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NAME <span class="sc">!=</span> <span class="st">&quot;Census Tract 9804.01, San Francisco County, California&quot;</span>, NAME <span class="sc">!=</span> <span class="st">&quot;Census Tract 017903, San Francisco County, California&quot;</span>)</span>
-<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>geom_to_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(hh_income_tested)</span>
-<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> geom_to_sf) <span class="sc">+</span></span>
-<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> significant), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">linewidth =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Tract by Statistical Significance&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Assessing the Statistical Significance of Mean Household </span><span class="sc">\n</span><span class="st">Income Changes: ACS 2015 vs. ACS 2020&quot;</span>,  <span class="at">fill =</span> <span class="st">&quot;Legend&quot;</span>) <span class="sc">+</span></span>
-<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;FALSE&quot;</span> <span class="ot">=</span> <span class="st">&quot;limegreen&quot;</span>, <span class="st">&quot;TRUE&quot;</span> <span class="ot">=</span> <span class="st">&quot;maroon&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
-<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
-<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
-<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
-<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">16</span>,</span>
-<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
-<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
-<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
-<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="dv">8</span>)</span>
-<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
-<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
-<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;italic&quot;</span>,</span>
-<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
-<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
-<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="sc">-</span><span class="dv">90</span>)</span>
-<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>The article&#39;s broadest claim is that each Zip code in San Francisco saw an increase in mean household income between the ACS15 and ACS20. Based on my analysis, it does not seem as if the article took the margin of error into account when providing estimates of rate of income increase. Of the 155 tracts with estimates in both periods, 117 show an increase in mean household income that is statistically distinguishable from zero at 90% confidence, while 38 show changes that fall within their margins of error.</span>
-<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>Several claims cannot be determined from this analysis. The specific percentage gains, over 75% in 94158 and 94102 and over 50% in 94118, 94131, and 94123, are reported for ZIP codes, while my analysis used tracts.</span>
-<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>Rewrite:</span>
-<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>In the late 2010s, household incomes rose in much of San Francisco. Comparing the Census Bureau&#39;s 2011–2015 and 2016–2020 5 year American Community Survey reports, 117 of the 155 census tracts with estimates in both period, show an increase in average household income large enough that we can be confident it isn&#39;t a product of survey error. The estimated change is small in the remaining 38 tracts relative to the survey&#39;s margin of error. This means that the data can&#39;t tell us whether incomes rose, fell, or held steady in those tracts. The largest confirmed increases are concentrated in and near the Downtown, which is an area that experienced substantially new housing and an influx of higher-earning residents. This corresponds to the trajectory of the tech boom, with a consistent increase in higher-earners moving to San Francisco in the 2010s. The increase is partly accounted for by who moved in, not only reflecting an increase for the people already living there. And because these figures are averages, a relatively small number of very high earners can pull a neighborhood&#39;s number up. Rising averages are also consistent with the widening gap between rich and poor.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Verify the Claim: Before the world changed: New census data looks at pre-Covid San Francisco&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Sara Cerami&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> September 18, 2026</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: &quot;Show code&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: true</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>In 2022, the SF Standard, a San Francisco news outlet, published an article entitled, &quot;Before the world changed: New census data looks at pre-Covid San Francisco: The latest ACS five-year study gives robust information on the city’s neighborhoods.&quot; It was comprised of a number of various maps and accompanying reports documenting how San Francisco&#39;s demographics shifted between the recently released 5-year American Community Survey (2016-2020) and the prior most recent non overlapping survey (2011-2015). The first map highlights the percent change of average household income in each San Francisco zipcode between the two 5-year ACS reports. It does not mention its methodology or approach to analyzing the data. I am interested in knowing if it was incorporated or addressed in the calculation of the percent change.        </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>The article does not explicitly say what variable it is using to calculate the average household income per zipcode, so to be sure I was on the right track, I pulled both the median household income as well as the mean household income (DP03_0063E). Comparing the two forms of averages, it was evident that the article used mean. The mean household income data accounts for inflation, calculated based on the year the report is issued. Additionally, median household income is top-coded in 5-year ACS tract level data, meaning that there is a cap on the highest income to protect privacy. While it may not impact the true median, it is a notable decision from the Census Bureau.  </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>The two ACS reports do not overlap.</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;CA&quot;</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2020</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">survey =</span> <span class="st">&quot;acs5&quot;</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">moe_pct =</span> moe <span class="sc">/</span> estimate <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">reliability =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    moe_pct <span class="sc">&lt;</span> <span class="dv">5</span>  <span class="sc">~</span> <span class="st">&quot;High confidence&quot;</span>,</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    moe_pct <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Moderate&quot;</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>         <span class="sc">~</span> <span class="st">&quot;Low confidence&quot;</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>sf_tract_income <span class="sc">%&gt;%</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(moe_pct)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot;San Francisco County, California&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot;Census&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(NAME, moe), <span class="at">y =</span> estimate)) <span class="sc">+</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;maroon&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> estimate <span class="sc">-</span> moe, <span class="at">ymax =</span> estimate <span class="sc">+</span> moe), <span class="at">width =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">12</span>,</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;SF Mean Household Income Estimates by Largest Marging of Error&quot;</span>,</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;San Francisco Census Tracts, ACS 2020 5-year estimates&quot;</span>,</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Tract&quot;</span>,</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Mean Household Income and MOE&quot;</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>This graph illustrates the notably high MOE for certain tracts. Upon further review, the tracts with the highest rate of margin of error are in areas with low resident density. </span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>Because I am not calculating a rate from two separate counts, and because mean is an aggregate of data, not a count, moe_prop() does not apply here. </span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>The NA data is located in tracts that are primarily parkland, pacific ocean, or bay. I decided to keep them in, because they all have some level of data in one of the ACS reports.   </span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>get_mean_hh_income_sf <span class="ot">&lt;-</span> <span class="cf">function</span>(yr) {</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_acs</span>(</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>    <span class="at">state     =</span> <span class="st">&quot;CA&quot;</span>,</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">year      =</span> yr,</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">survey    =</span> <span class="st">&quot;acs5&quot;</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">paste0</span>(yr <span class="sc">-</span> <span class="dv">4</span>, <span class="st">&quot;-&quot;</span>, yr))</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>mean_hh_income_sf_change <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_mean_hh_income_sf</span>(<span class="dv">2015</span>),</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_mean_hh_income_sf</span>(<span class="dv">2020</span>)</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>mean_hh_income_sf_new <span class="ot">&lt;-</span> mean_hh_income_sf_change <span class="sc">%&gt;%</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, NAME, period, estimate, moe) <span class="sc">%&gt;%</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from  =</span> period,</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(estimate, moe)</span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="ot">&lt;-</span> mean_hh_income_sf_new <span class="sc">%&gt;%</span></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">change   =</span> <span class="st">`</span><span class="at">estimate_2016-2020</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">estimate_2011-2015</span><span class="st">`</span>,</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_1     =</span> <span class="st">`</span><span class="at">moe_2011-2015</span><span class="st">`</span> <span class="sc">/</span> <span class="fl">1.645</span>,</span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_2     =</span> <span class="st">`</span><span class="at">moe_2016-2020</span><span class="st">`</span> <span class="sc">/</span> <span class="fl">1.645</span>,</span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">se_diff  =</span> <span class="fu">sqrt</span>(se_1<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> se_2<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>    <span class="at">moe_diff =</span> se_diff <span class="sc">*</span> <span class="fl">1.645</span>,</span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">z        =</span> change <span class="sc">/</span> se_diff,</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">significant =</span> <span class="fu">abs</span>(z) <span class="sc">&gt;</span> <span class="fl">1.645</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="sc">%&gt;%</span></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(significant)</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="ot">&lt;-</span> sf_tract_income <span class="sc">%&gt;%</span></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv =</span> (moe <span class="sc">/</span> <span class="fl">1.645</span>) <span class="sc">/</span> estimate <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>    <span class="at">dot =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;</span> <span class="dv">12</span>  <span class="sc">~</span> <span class="st">&quot;🟢&quot;</span>,</span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;🟡&quot;</span>,</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>     <span class="sc">~</span> <span class="st">&quot;🔴&quot;</span></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>    <span class="at">flag =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;</span> <span class="dv">12</span>  <span class="sc">~</span> <span class="st">&quot;Reliable&quot;</span>,</span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>      cv <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;Somewhat reliable&quot;</span>,</span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>     <span class="sc">~</span> <span class="st">&quot;Unreliable&quot;</span></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME =</span> <span class="fu">str_remove</span>(NAME, <span class="st">&quot; San Francisco County, California&quot;</span>)</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cv)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dot, NAME, estimate, moe, cv, flag)</span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>reliability_table <span class="sc">%&gt;%</span></span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(estimate, moe), <span class="at">decimals =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> cv, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">dot      =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME     =</span> <span class="st">&quot;Tract&quot;</span>,</span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="st">&quot;Estimate&quot;</span>,</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">moe      =</span> <span class="st">&quot;MOE&quot;</span>,</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv       =</span> <span class="st">&quot;CV (%)&quot;</span>,</span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">flag     =</span> <span class="st">&quot;Reliability&quot;</span></span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> dot) <span class="sc">%&gt;%</span></span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">&quot;Mean Household Income by San Francisco Census Tract&quot;</span>,</span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;San Francisco Census Tracts, ACS 2020 5-year estimates&quot;</span></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Reliability thresholds follow Jurjevich et al. (2018): CV &lt; 12% reliable, 12–40% somewhat reliable, &gt; 40% unreliable.&quot;</span></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a>acs_2015 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2015</span>,</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;CA&quot;</span>,</span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">geometry =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">progress_bar =</span> <span class="cn">FALSE</span></span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>acs_2020 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">&quot;tract&quot;</span>,</span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">&quot;San Francisco&quot;</span>,</span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="st">&quot;DP03_0063E&quot;</span>,</span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="dv">2020</span>,</span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;CA&quot;</span>,</span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a>  <span class="at">geometry =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">progress_bar =</span> <span class="cn">FALSE</span></span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="ot">&lt;-</span> hh_income_tested <span class="sc">%&gt;%</span></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(acs_2015 <span class="sc">%&gt;%</span> <span class="fu">select</span>(GEOID, geometry), <span class="at">by =</span> <span class="st">&#39;GEOID&#39;</span>)</span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a>hh_income_tested <span class="ot">&lt;-</span> hh_income_tested <span class="sc">%&gt;%</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NAME <span class="sc">!=</span> <span class="st">&quot;Census Tract 9804.01, San Francisco County, California&quot;</span>, NAME <span class="sc">!=</span> <span class="st">&quot;Census Tract 017903, San Francisco County, California&quot;</span>)</span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>geom_to_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(hh_income_tested)</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> geom_to_sf) <span class="sc">+</span></span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> significant), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">linewidth =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Tract by Statistical Significance&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Assessing the Statistical Significance of Mean Household </span><span class="sc">\n</span><span class="st">Income Changes: ACS 2015 vs. ACS 2020&quot;</span>,  <span class="at">fill =</span> <span class="st">&quot;Legend&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;FALSE&quot;</span> <span class="ot">=</span> <span class="st">&quot;limegreen&quot;</span>, <span class="st">&quot;TRUE&quot;</span> <span class="ot">=</span> <span class="st">&quot;maroon&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">16</span>,</span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="dv">8</span>)</span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;sans&quot;</span>,</span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;italic&quot;</span>,</span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>      <span class="at">vjust =</span> <span class="dv">0</span>,</span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">b=</span><span class="sc">-</span><span class="dv">90</span>)</span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a>The article&#39;s broadest claim is that each Zip code in San Francisco saw an increase in mean household income between the ACS15 and ACS20. Based on my analysis, it does not seem as if the article took the margin of error into account when providing estimates of rate of income increase. Of the 155 tracts with estimates in both periods, 117 show an increase in mean household income that is statistically distinguishable from zero at 90% confidence, while 38 show changes that fall within their margins of error.</span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a>Several claims cannot be determined from this analysis. The specific percentage gains, over 75% in 94158 and 94102 and over 50% in 94118, 94131, and 94123, are reported for ZIP codes, while my analysis used tracts.</span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a>Rewrite:</span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a>In the late 2010s, household incomes rose in much of San Francisco. Comparing the Census Bureau&#39;s 2011–2015 and 2016–2020 5 year American Community Survey reports, 117 of the 155 census tracts with estimates in both period, show an increase in average household income large enough that we can be confident it isn&#39;t a product of survey error. The estimated change is small in the remaining 38 tracts relative to the survey&#39;s margin of error. This means that the data can&#39;t tell us whether incomes rose, fell, or held steady in those tracts. The largest confirmed increases are concentrated in and near the Downtown, which is an area that experienced substantially new housing and an influx of higher-earning residents. This corresponds to the trajectory of the tech boom, with a consistent increase in higher-earners moving to San Francisco in the 2010s. The increase is partly accounted for by who moved in, not only reflecting an increase for the people already living there. And because these figures are averages, a relatively small number of very high earners can pull a neighborhood&#39;s number up. Rising averages are also consistent with the widening gap between rich and poor.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

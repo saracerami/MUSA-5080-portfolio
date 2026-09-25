@@ -127,7 +127,6 @@ library(gt)
 ```
 
 ```{r}
-#| include: false
 reliability_table <- sf_tract_income %>%
   mutate(
     cv = (moe / 1.645) / estimate * 100,
