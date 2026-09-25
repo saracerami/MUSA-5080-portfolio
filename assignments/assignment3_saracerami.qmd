@@ -55,7 +55,7 @@ ggplot(sf_tract_income)+
 ```
 
 ```{r}
-#| include: false
+#| eval: false
 ggplot(sf_tract_income)+
   aes(x=estimate, y = moe_pct)+
   geom_point(color = "maroon")
@@ -190,7 +190,7 @@ reliability_table %>%
 ```
 
 ```{r}
-#| include: false
+#| eval: false
 acs_2015 <- get_acs(
   geography = "tract",
   county = "San Francisco",
@@ -214,7 +214,7 @@ library(sf)
 ```
 
 ```{r}
-#| include: false
+#| eval: false
 hh_income_tested <- hh_income_tested %>%
   left_join(acs_2015 %>% select(GEOID, geometry), by = 'GEOID')
 ```
