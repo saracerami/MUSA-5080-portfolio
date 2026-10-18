@@ -63,7 +63,7 @@ Sys.getenv("CENSUS_API_KEY") != ""   # should print TRUE
 This function runs 10-fold cross-validation with the same seed every time, so every model in your log is tested on the same folds. **You don't need to change it.** Read it once so you know what it does.
 -->
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 ctrl <- trainControl(method = "cv", number = 10)
 
 cv_rmse <- function(formula, data) {
@@ -86,7 +86,7 @@ cv_rmse <- function(formula, data) {
 Every time you fit a new model, add a row. By the end, this table is the story of your assignment.
 -->
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 model_log <- tibble(
   model   = character(),
   added   = character(),
@@ -686,10 +686,7 @@ Try **at least one of each**: a log, a squared term, and a categorical variable.
 ggplot(tracts, aes(x = groc_per_sqmi)) + geom_histogram(bins = 30) + theme_minimal()
 ggplot(tracts, aes(x = log1p(groc_per_sqmi))) + geom_histogram(bins = 30) + theme_minimal()
 ```
-```{r}
-ggplot(tracts, aes(x = groc_per_sqmi)) + geom_histogram(bins = 30) + theme_minimal()
-ggplot(tracts, aes(x = log1p(groc_per_sqmi))) + geom_histogram(bins = 30) + theme_minimal()
-```
+
 
 ```{r}
 ggplot(tracts, aes(x = dist_unis_mi)) + geom_histogram(bins = 30) + theme_minimal()
