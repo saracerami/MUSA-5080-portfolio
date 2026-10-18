@@ -1,9 +1,10 @@
 ---
-title: "Assignment: Building Features, Watching What Happens"
-subtitle: "MUSA 5080 · Integrates Weeks 1–5 · Due Friday, October 16"
+title: "Building Features, Watching What Happens"
+subtitle: "October 16, 2026"
 author: "Sara Cerami"
 format:
   html:
+    code-fold: true
     toc: true
     code-fold: show
     code-tools: true
@@ -11,9 +12,6 @@ execute:
   warning: false
   message: false
 freeze: false
-output:
-  html_document:
-    code_folding: hide
 ---
 
 <!-- ## What this assignment is (and isn't)
@@ -138,7 +136,8 @@ philly_tracts <- get_acs(
   year = 2023,
   survey = "acs5",
   output = "wide",
-  geometry = TRUE
+  geometry = TRUE,
+  progress_bar = FALSE
 ) %>%
   st_transform(2272)
 
