@@ -63,7 +63,7 @@ Sys.getenv("CENSUS_API_KEY") != ""   # should print TRUE
 This function runs 10-fold cross-validation with the same seed every time, so every model in your log is tested on the same folds. **You don't need to change it.** Read it once so you know what it does.
 -->
 
-```{r}
+```{r setup, include=FALSE}
 ctrl <- trainControl(method = "cv", number = 10)
 
 cv_rmse <- function(formula, data) {
@@ -86,7 +86,7 @@ cv_rmse <- function(formula, data) {
 Every time you fit a new model, add a row. By the end, this table is the story of your assignment.
 -->
 
-```{r}
+```{r setup, include=FALSE}
 model_log <- tibble(
   model   = character(),
   added   = character(),
@@ -95,7 +95,7 @@ model_log <- tibble(
 )
 ```
 
-## Part 1 
+## Part 1: ACS data  
 
 <!--Choose your outcome
 
@@ -500,7 +500,7 @@ If a tract has 40 residents and 3 burglaries, its rate is 75 per 1,000, which is
 How far is each tract from its nearest Indego station? Use the Week 4 pattern: find the nearest feature, then measure to it **element by element**.
 -->
 
-```{r}
+```{r, include=FALSE}
 stations <- st_read("https://www.rideindego.com/stations/json/", quiet = TRUE) %>%
   st_transform(st_crs(tracts))
 
@@ -519,7 +519,7 @@ tracts <- tracts %>%
 Sometimes the "thing" is a single location, such as City Hall as a stand-in for the center of the regional economy.
 -->
 
-```{r}
+```{r, include=FALSE}
 city_hall <- st_sfc(st_point(c(-75.1636, 39.9526)), crs = 4326) %>%
   st_transform(st_crs(tracts))
 
@@ -765,7 +765,7 @@ I used Open Data Philly's land use data to determine residential density. I pull
 
 ---
 
-## Part 6
+## Part 6: Final model
 
 <!--
 Combine the features and transformations that earned their place, **judged by CV RMSE, not p-values.**
