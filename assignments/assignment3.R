@@ -2,8 +2,8 @@ library(tidyverse)
 library(tidycensus)
 
 sf_tract_income <- get_acs(
-  geography = "tract ",
-  variables = "B19013_001",
+  geography = "tract",
+  variables = "B19081_001",
   state = "CA",
   county = "San Francisco",
   year = 2020,
@@ -80,7 +80,7 @@ sf_tract_income %>%
   mutate(NAME = str_remove(NAME, "San Francisco County, California")) %>%
   mutate(NAME = str_remove(NAME, "Census")) %>%
   slice_head(n = 15) %>%
-  ggplot(aes(x = reorder(NAME, estimate), y = estimate)) +
+  ggplot(aes(x = reorder(NAME, moe_pct), y = estimate)) +
   geom_col(fill = "maroon") +
   geom_errorbar(aes(ymin = estimate - moe, ymax = estimate + moe), width = 0.3) +
   coord_flip() +
@@ -96,15 +96,21 @@ sf_tract_income %>%
   geom_col(fill = "maroon") +
   geom_errorbar(aes(ymin = estimate - moe, ymax = estimate + moe), width = 0.3) +
   coord_flip() +
-  theme_minimal() +
+  theme_minimal(
+    plot.title = element_text(
+        family = "sans",
+        face = "bold",
+        size = 16,
+        color = "black",
+        hjust = 0,
+        vjust = 0,
+        margin = margin(b=8))+
   scale_y_continuous(labels = scales::comma) +
   labs(
     title = "San Francisco Household Income Estimates by Largest Margin of Error",
     subtitle = "Median Household Income by San Francisco Census Tracts, ACS 2020 5-year estimates",
     x = "Tract",
-    y = "Median Household Income"
-  )
-
+    y = "Mean Household Income"
 
 get_median_hh_income_sf <- function(yr) {
   get_acs(
