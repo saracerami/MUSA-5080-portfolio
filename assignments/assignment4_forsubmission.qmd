@@ -98,7 +98,7 @@ model_log <- tibble(
 )
 ```
 
-## Part 1 
+## Part 1: ACS data 
 
 <!--Choose your outcome
 
@@ -767,7 +767,7 @@ I used Open Data Philly's land use data to determine residential density. I pull
 
 ---
 
-## Part 6
+## Part 6: Final model
 
 <!--
 Combine the features and transformations that earned their place, **judged by CV RMSE, not p-values.**
