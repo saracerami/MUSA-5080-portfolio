@@ -186,8 +186,8 @@ identical features. Split off `train` again whenever you add something.
 ```{r}
 #| label: load
 all_sales <- bind_rows(
-  read_csv("chicago_train.csv", show_col_types = FALSE) %>% mutate(split = "train"),
-  read_csv("chicago_test.csv",  show_col_types = FALSE) %>% mutate(split = "test")
+  read_csv("assignments/PPAAssignment5/chicago_train.csv", show_col_types = FALSE) %>% mutate(split = "train"),
+  read_csv("assignments/PPAAssignment5/chicago_test.csv", show_col_types = FALSE) %>% mutate(split = "test")
 ) %>%
   st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
   st_transform(3435)            # Illinois East State Plane, feet
