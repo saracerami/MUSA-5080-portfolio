@@ -4096,7 +4096,10 @@ vertical-align: -.125em;
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#part-4-choosing-a-threshold" id="toc-part-4-choosing-a-threshold" class="nav-link active" data-scroll-target="#part-4-choosing-a-threshold">Part 4: Choosing a threshold</a></li>
+  <li><a href="#part-1-load-and-clean" id="toc-part-1-load-and-clean" class="nav-link active" data-scroll-target="#part-1-load-and-clean">Part 1: Load and clean</a></li>
+  <li><a href="#part-2" id="toc-part-2" class="nav-link" data-scroll-target="#part-2">Part 2</a></li>
+  <li><a href="#part-3" id="toc-part-3" class="nav-link" data-scroll-target="#part-3">Part 3</a></li>
+  <li><a href="#part-4-choosing-a-threshold" id="toc-part-4-choosing-a-threshold" class="nav-link" data-scroll-target="#part-4-choosing-a-threshold">Part 4: Choosing a threshold</a></li>
   <li><a href="#part-5-is-it-race-blind" id="toc-part-5-is-it-race-blind" class="nav-link" data-scroll-target="#part-5-is-it-race-blind">Part 5: Is it race-blind?</a></li>
   <li><a href="#part-6-does-it-hold-up-in-places-it-hasnt-seen" id="toc-part-6-does-it-hold-up-in-places-it-hasnt-seen" class="nav-link" data-scroll-target="#part-6-does-it-hold-up-in-places-it-hasnt-seen">Part 6: Does it hold up in places it hasn’t seen?</a></li>
   <li><a href="#part-7-the-memo" id="toc-part-7-the-memo" class="nav-link" data-scroll-target="#part-7-the-memo">Part 7: The memo</a></li>
@@ -4161,7 +4164,8 @@ vertical-align: -.125em;
 <!-- - **Counts are top-coded:** "10 or more" prior felony arrests is stored as text. `parse_number()` turns it into 10, which undercounts people with many more. -->
 <!-- - **`Residence_PUMA`** is not a census PUMA code. NIJ grouped Georgia's PUMAs into 25 areas and numbered them 1–25 to protect privacy. You can use it to group people by place, but you can't map it. -->
 <!-- - **`Training_Sample`** is NIJ's own train/test split. Use it. -->
-<p><strong># Part 1: Load and clean</strong></p>
+<section id="part-1-load-and-clean" class="level1">
+<h1>Part 1: Load and clean</h1>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
@@ -4250,7 +4254,9 @@ vertical-align: -.125em;
 </div>
 </div>
 <p>There are 2,217 values missing from the Gang_Affiliated column and they are all Women. In fact, no women are identified as definitively gang affiliated or definitively not gang affiliated in the data, which leads me to believe women are not asked about gang affiliation or their answers are not documented as part of the data collection process. If these individuals were dropped from the dataset as a result of missing values, there would be no women included in the data.</p>
-<p><strong># Part 2</strong></p>
+</section>
+<section id="part-2" class="level1">
+<h1>Part 2</h1>
 <!-- The parole decision happens **at release**. Some columns in this file were recorded **during** the three years of supervision that followed. -->
 <!-- **2.1** Sort every predictor column into one of two lists. You don't need code; use `names(nij)` and the column names. -->
 <!-- | Known at release | Recorded during supervision (leakage) | -->
@@ -4258,7 +4264,9 @@ vertical-align: -.125em;
 <!-- | | | -->
 <!-- **2.2** Pick one variable from the right-hand column and explain, in two sentences, why including it would make your model look better than it really is.  -->
 <p>I imagine that the data measuring failure to report probationary violations occur after release. Including data from after release for a prediction model that is intended for upon release decisions will make the model look better than it really is. In other words, the model will not have post release data when calculating risk because they do not exist yet. If I were to include this data point as a predictor, it would be bound up in the outcome, risking inflated success.</p>
-<p><strong># Part 3</strong></p>
+</section>
+<section id="part-3" class="level1">
+<h1>Part 3</h1>
 <!-- Start from this model. -->
 <div class="cell">
 <details open class="code-fold">
@@ -4424,6 +4432,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 </div>
 <p>I added prior arrests for drug related offenses, whether the individual struggles with mental health and substance abuse, and education level. I chose prior drug offenses and mental health and substance abuse issues as a predictor because it is common to have co-occurring disorders, so those who have mental health issues commonly have addiction issues or the inverse. Additionally, I chose prior arrests related to drugs and education level as key indicators of class, which is a predictor for rates of incarceration. That is certainly not to say that high-income people do not sell drugs, but they are much less likely to be arrested for it. No data points were dropped.</p>
+</section>
 <section id="part-4-choosing-a-threshold" class="level1">
 <h1>Part 4: Choosing a threshold</h1>
 <p><strong>4.1</strong></p>
@@ -5268,7 +5277,7 @@ FALSE  TRUE
 <span id="cb46-52"><a href="#cb46-52" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- - **`Residence_PUMA`** is not a census PUMA code. NIJ grouped Georgia&#39;s PUMAs into 25 areas and numbered them 1–25 to protect privacy. You can use it to group people by place, but you can&#39;t map it. --&gt;</span></span>
 <span id="cb46-53"><a href="#cb46-53" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- - **`Training_Sample`** is NIJ&#39;s own train/test split. Use it. --&gt;</span></span>
 <span id="cb46-54"><a href="#cb46-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-55"><a href="#cb46-55" aria-hidden="true" tabindex="-1"></a>**# Part 1: Load and clean**</span>
+<span id="cb46-55"><a href="#cb46-55" aria-hidden="true" tabindex="-1"></a><span class="fu"># Part 1: Load and clean</span></span>
 <span id="cb46-56"><a href="#cb46-56" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-57"><a href="#cb46-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-60"><a href="#cb46-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
@@ -5314,7 +5323,7 @@ FALSE  TRUE
 <span id="cb46-104"><a href="#cb46-104" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-105"><a href="#cb46-105" aria-hidden="true" tabindex="-1"></a>There are 2,217 values missing from the Gang_Affiliated column and they are all Women. In fact, no women are identified as definitively gang affiliated or definitively not gang affiliated in the data, which leads me to believe women are not asked about gang affiliation or their answers are not documented as part of the data collection process. If these individuals were dropped from the dataset as a result of missing values, there would be no women included in the data.   </span>
 <span id="cb46-106"><a href="#cb46-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-107"><a href="#cb46-107" aria-hidden="true" tabindex="-1"></a>**# Part 2**</span>
+<span id="cb46-107"><a href="#cb46-107" aria-hidden="true" tabindex="-1"></a><span class="fu"># Part 2</span></span>
 <span id="cb46-108"><a href="#cb46-108" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-109"><a href="#cb46-109" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- The parole decision happens **at release**. Some columns in this file were recorded **during** the three years of supervision that followed. --&gt;</span></span>
 <span id="cb46-110"><a href="#cb46-110" aria-hidden="true" tabindex="-1"></a></span>
@@ -5329,7 +5338,7 @@ FALSE  TRUE
 <span id="cb46-119"><a href="#cb46-119" aria-hidden="true" tabindex="-1"></a>I imagine that the data measuring failure to report probationary violations occur after release. Including data from after release for a prediction model that is intended for upon release decisions will make the model look better than it really is. In other words, the model will not have post release data when calculating risk because they do not exist yet. If I were to include this data point as a predictor, it would be bound up in the outcome, risking inflated success.   </span>
 <span id="cb46-120"><a href="#cb46-120" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-121"><a href="#cb46-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-122"><a href="#cb46-122" aria-hidden="true" tabindex="-1"></a>**# Part 3**</span>
+<span id="cb46-122"><a href="#cb46-122" aria-hidden="true" tabindex="-1"></a><span class="fu"># Part 3</span></span>
 <span id="cb46-123"><a href="#cb46-123" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-124"><a href="#cb46-124" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Start from this model. --&gt;</span></span>
 <span id="cb46-125"><a href="#cb46-125" aria-hidden="true" tabindex="-1"></a></span>

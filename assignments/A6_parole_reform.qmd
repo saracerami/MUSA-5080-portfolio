@@ -52,7 +52,7 @@ freeze: false
 <!-- - **`Residence_PUMA`** is not a census PUMA code. NIJ grouped Georgia's PUMAs into 25 areas and numbered them 1–25 to protect privacy. You can use it to group people by place, but you can't map it. -->
 <!-- - **`Training_Sample`** is NIJ's own train/test split. Use it. -->
 
-**# Part 1: Load and clean**
+# Part 1: Load and clean
 
 
 ```{r}
@@ -98,7 +98,7 @@ table(train$Gang_Affiliated, train$Gender, useNA = "ifany")
 
 There are 2,217 values missing from the Gang_Affiliated column and they are all Women. In fact, no women are identified as definitively gang affiliated or definitively not gang affiliated in the data, which leads me to believe women are not asked about gang affiliation or their answers are not documented as part of the data collection process. If these individuals were dropped from the dataset as a result of missing values, there would be no women included in the data.   
 
-**# Part 2**
+# Part 2
 
 <!-- The parole decision happens **at release**. Some columns in this file were recorded **during** the three years of supervision that followed. -->
 
@@ -113,7 +113,7 @@ There are 2,217 values missing from the Gang_Affiliated column and they are all 
 I imagine that the data measuring failure to report probationary violations occur after release. Including data from after release for a prediction model that is intended for upon release decisions will make the model look better than it really is. In other words, the model will not have post release data when calculating risk because they do not exist yet. If I were to include this data point as a predictor, it would be bound up in the outcome, risking inflated success.   
 
 
-**# Part 3**
+# Part 3
 
 <!-- Start from this model. -->
 
